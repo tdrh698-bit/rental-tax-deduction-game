@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市删除验证 - 上海广州深圳武汉西安已删除</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #1E5AA8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1E5AA8;
+            padding-bottom: 10px;
+        }
+        
+        .verification-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .verification-box.success {
+            background: #E8F5E9;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .verification-box.error {
+            background: #FFEBEE;
+            border-left: 4px solid #F44336;
+        }
+        
+        .city-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .city-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .city-item.correct {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .city-item.incorrect {
+            border-left: 4px solid #F44336;
+            opacity: 0.6;
+        }
+        
+        .city-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .city-status {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .status-correct {
+            color: #4CAF50;
+        }
+        
+        .status-incorrect {
+            color: #F44336;
+        }
+        
+        .test-links {
+            margin-top: 30px;
+            padding: 20px;
+            background: #F0F7FF;
+            border-radius: 8px;
+        }
+        
+        .test-links a {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1E5AA8;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .test-links a:hover {
+            background: #e3f2fd;
+            border-color: #1E5AA8;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #1E5AA8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2D7DD2;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ 城市删除验证 - 上海广州深圳武汉西安已删除</h1>
+        
+        <div class="verification-box success">
+            <h2><i class="fas fa-check-circle"></i> 删除任务完成</h2>
+            <p>已从任务一的待分类城市栏目中删除以下城市：</p>
+            <ul>
+                <li><strong>上海市</strong> - 已删除</li>
+                <li><strong>广州市</strong> - 已删除</li>
+                <li><strong>深圳市</strong> - 已删除</li>
+                <li><strong>武汉市</strong> - 已删除</li>
+                <li><strong>西安市</strong> - 已删除</li>
+            </ul>
+            <p>现在只保留8个指定城市。</p>
+        </div>
+        
+        <h2>🔍 文件验证结果</h2>
+        <div id="fileVerification">正在验证文件...</div>
+        
+        <h2>🏙️ 当前正确的8个城市</h2>
+        <div class="city-list">
+            <div class="city-item correct">
+                <div class="city-name">北京市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">直辖市 - 1500元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">厦门市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">计划单列市 - 1500元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">杭州市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">省会城市 - 1500元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">苏州市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">人口>100万 - 1100元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">温州市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">人口>100万 - 1100元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">佛山市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">人口>100万 - 1100元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">伊春市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">人口≤100万 - 800元/月</div>
+            </div>
+            
+            <div class="city-item correct">
+                <div class="city-name">七台河市</div>
+                <div class="city-status status-correct">✅ 正确保留</div>
+                <div style="font-size: 12px; color: #666;">人口≤100万 - 800元/月</div>
+            </div>
+        </div>
+        
+        <div class="verification-box error">
+            <h2><i class="fas fa-times-circle"></i> 已删除的城市</h2>
+            <div class="city-list">
+                <div class="city-item incorrect">
+                    <div class="city-name">上海市</div>
+                    <div class="city-status status-incorrect">❌ 已删除</div>
+                </div>
+                
+                <div class="city-item incorrect">
+                    <div class="city-name">广州市</div>
+                    <div class="city-status status-incorrect">❌ 已删除</div>
+                </div>
+                
+                <div class="city-item incorrect">
+                    <div class="city-name">深圳市</div>
+                    <div class="city-status status-incorrect">❌ 已删除</div>
+                </div>
+                
+                <div class="city-item incorrect">
+                    <div class="city-name">武汉市</div>
+                    <div class="city-status status-incorrect">❌ 已删除</div>
+                </div>
+                
+                <div class="city-item incorrect">
+                    <div class="city-name">西安市</div>
+                    <div class="city-status status-incorrect">❌ 已删除</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-links">
+            <h2>🎮 测试链接</h2>
+            <p>使用以下链接测试修复后的游戏：</p>
+            
+            <a href="http://43.153.117.19:3000/index.html?fix=city" target="_blank">
+                http://43.153.117.19:3000/index.html?fix=city
+            </a>
+            
+            <a href="http://43.153.117.19:3000/test-game.html?fix=city" target="_blank">
+                http://43.153.117.19:3000/test-game.html?fix=city
+            </a>
+            
+            <a href="http://43.153.117.19:3000/fixed-test.html" target="_blank">
+                http://43.153.117.19:3000/fixed-test.html
+            </a>
+            
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="forceRefreshAll()">
+                    <i class="fas fa-sync-alt"></i> 强制刷新所有页面
+                </button>
+                
+                <button class="btn btn-secondary" onclick="checkCache()">
+                    <i class="fas fa-trash-alt"></i> 清除缓存指南
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 验证文件函数
+        async function verifyFiles() {
+            const verificationElement = document.getElementById('fileVerification');
+            
+            try {
+                // 检查 app.js
+                const appJsResponse = await fetch('app.js?t=' + new Date().getTime());
+                const appJsContent = await appJsResponse.text();
+                
+                // 检查 game.js
+                const gameJsResponse = await fetch('game.js?t=' + new Date().getTime());
+                const gameJsContent = await gameJsResponse.text();
+                
+                // 需要删除的城市
+                const citiesToDelete = ["上海市", "广州市", "深圳市", "武汉市", "西安市"];
+                
+                // 需要保留的城市
+                const citiesToKeep = ["北京市", "厦门市", "杭州市", "苏州市", "温州市", "佛山市", "伊春市", "七台河市"];
+                
+                let appJsHasDeleted = true;
+                let appJsHasAllKeep = true;
+                let gameJsHasDeleted = true;
+                let gameJsHasAllKeep = true;
+                
+                // 检查 app.js
+                citiesToDelete.forEach(city => {
+                    if (appJsContent.includes(`"${city}"`)) {
+                        appJsHasDeleted = false;
+                    }
+                });
+                
+                citiesToKeep.forEach(city => {
+                    if (!appJsContent.includes(`"${city}"`)) {
+                        appJsHasAllKeep = false;
+                    }
+                });
+                
+                // 检查 game.js
+                citiesToDelete.forEach(city => {
+                    if (gameJsContent.includes(`"${city}"`)) {
+                        gameJsHasDeleted = false;
+                    }
+                });
+                
+                citiesToKeep.forEach(city => {
+                    if (!gameJsContent.includes(`"${city}"`)) {
+                        gameJsHasAllKeep = false;
+                    }
+                });
+                
+                let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">';
+                
+                // app.js 验证结果
+                html += `
+                    <div style="padding: 15px; background: ${appJsHasDeleted && appJsHasAllKeep ? '#E8F5E9' : '#FFEBEE'}; border-radius: 6px;">
+                        <h4><i class="fas ${appJsHasDeleted && appJsHasAllKeep ? 'fa-check-circle' : 'fa-times-circle'}"></i> app.js</h4>
+                        <p>${appJsHasDeleted ? '✅ 已删除指定城市' : '❌ 仍有未删除城市'}</p>
+                        <p>${appJsHasAllKeep ? '✅ 包含所有8个城市' : '❌ 缺少指定城市'}</p>
+                    </div>
+                `;
+                
+                // game.js 验证结果
+                html += `
+                    <div style="padding: 15px; background: ${gameJsHasDeleted && gameJsHasAllKeep ? '#E8F5E9' : '#FFEBEE'}; border-radius: 6px;">
+                        <h4><i class="fas ${gameJsHasDeleted && gameJsHasAllKeep ? 'fa-check-circle' : 'fa-times-circle'}"></i> game.js</h4>
+                        <p>${gameJsHasDeleted ? '✅ 已删除指定城市' : '❌ 仍有未删除城市'}</p>
+                        <p>${gameJsHasAllKeep ? '✅ 包含所有8个城市' : '❌ 缺少指定城市'}</p>
+                    </div>
+                `;
+                
+                html += '</div>';
+                
+                if (appJsHasDeleted && appJsHasAllKeep && gameJsHasDeleted && gameJsHasAllKeep) {
+                    html += '<p style="color: #4CAF50; margin-top: 10px; font-weight: bold;"><i class="fas fa-check-circle"></i> 所有文件验证通过！城市删除完成。</p>';
+                } else {
+                    html += '<p style="color: #F44336; margin-top: 10px; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> 文件验证发现问题，请使用带?fix参数的链接。</p>';
+                }
+                
+                verificationElement.innerHTML = html;
+                
+            } catch (error) {
+                verificationElement.innerHTML = `<p style="color: #F44336;">验证失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 强制刷新所有页面
+        function forceRefreshAll() {
+            if (confirm('这将打开所有测试页面并强制刷新。确定要继续吗？')) {
+                const timestamp = new Date().getTime();
+                const links = [
+                    'index.html',
+                    'test-game.html',
+                    'fixed-test.html',
+                    'city-fix-verify.html'
+                ];
+                
+                links.forEach(link => {
+                    window.open(`http://43.153.117.19:3000/${link}?force=${timestamp}`, '_blank');
+                });
+            }
+        }
+        
+        // 清除缓存指南
+        function checkCache() {
+            alert('如果仍看到旧城市，请按以下步骤操作：\n\n' +
+                  '1. 强制刷新当前页：Ctrl+F5 (Win) / Cmd+Shift+R (Mac)\n' +
+                  '2. 清除浏览器缓存：设置 → 隐私和安全 → 清除浏览数据\n' +
+                  '3. 选择"所有时间"，勾选"缓存的图片和文件"\n' +
+                  '4. 使用无痕/隐私模式访问\n' +
+                  '5. 使用带?fix参数的链接');
+        }
+        
+        // 页面加载后验证文件
+        document.addEventListener('DOMContentLoaded', verifyFiles);
+        
+        // 添加Font Awesome图标
+        const faScript = document.createElement('script');
+        faScript.src = 'https://kit.fontawesome.com/a076d05399.js';
+        faScript.crossOrigin = 'anonymous';
+        document.head.appendChild(faScript);
+    </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城市数据验证 - 仅8个指定城市</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #1E5AA8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1E5AA8;
+            padding-bottom: 10px;
+        }
+        
+        .verification-section {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .verification-section.success {
+            border-left: 4px solid #4CAF50;
+            background: #E8F5E9;
+        }
+        
+        .verification-section.error {
+            border-left: 4px solid #F44336;
+            background: #FFEBEE;
+        }
+        
+        .verification-section.warning {
+            border-left: 4px solid #FF9800;
+            background: #FFF3E0;
+        }
+        
+        .city-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .city-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .city-item.required {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .city-item.missing {
+            border-left: 4px solid #F44336;
+            opacity: 0.6;
+        }
+        
+        .city-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .city-details {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .city-zone {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1E5AA8;
+        }
+        
+        .test-links {
+            margin-top: 30px;
+            padding: 20px;
+            background: #F0F7FF;
+            border-radius: 8px;
+        }
+        
+        .test-links a {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1E5AA8;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .test-links a:hover {
+            background: #e3f2fd;
+            border-color: #1E5AA8;
+            transform: translateX(5px);
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .status-success {
+            background: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .status-error {
+            background: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .status-warning {
+            background: #FFF3E0;
+            color: #F57C00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏙️ 城市数据验证 - 仅8个指定城市</h1>
+        
+        <div class="verification-section success">
+            <h2>✅ 验证目标</h2>
+            <p>清空所有原有城市数据，仅保留以下8个指定城市：</p>
+            <ol>
+                <li>北京市（直辖市）</li>
+                <li>厦门市（计划单列市）</li>
+                <li>杭州市（省会城市）</li>
+                <li>苏州市（人口>100万）</li>
+                <li>温州市（人口>100万）</li>
+                <li>佛山市（人口>100万）</li>
+                <li>伊春市（人口≤100万）</li>
+                <li>七台河市（人口≤100万）</li>
+            </ol>
+        </div>
+        
+        <div id="gameJsVerification" class="verification-section">
+            <h2>🔍 game.js 文件验证</h2>
+            <p>正在检查 game.js 中的城市数据...</p>
+        </div>
+        
+        <div id="calculationJsVerification" class="verification-section">
+            <h2>🧮 calculation-game.js 文件验证</h2>
+            <p>正在检查 calculation-game.js 中的城市数据...</p>
+        </div>
+        
+        <div class="verification-section warning">
+            <h2>⚠️ 重要提示</h2>
+            <p>如果验证显示仍有旧城市数据，请：</p>
+            <ol>
+                <li>强制刷新浏览器（Ctrl+F5 或 Cmd+Shift+R）</li>
+                <li>清除浏览器缓存</li>
+                <li>使用无痕/隐私模式访问</li>
+                <li>等待服务器完全重启（约10秒）</li>
+            </ol>
+        </div>
+        
+        <div class="test-links">
+            <h2>🎮 测试链接</h2>
+            <a href="http://43.153.117.19:3000/test-game.html" target="_blank">
+                🎯 综合测试页面 - test-game.html
+            </a>
+            <a href="http://43.153.117.19:3000/index.html" target="_blank">
+                🎮 主游戏页面 - index.html
+            </a>
+            <a href="http://43.153.117.19:3000/test-cities.html" target="_blank">
+                📊 城市数据测试页 - test-cities.html
+            </a>
+        </div>
+        
+        <div class="verification-section">
+            <h2>📁 文件修改记录</h2>
+            <div class="code-block">
+// game.js - 第10-20行
+this.cities = [
+    { name: "北京市", population: "2170万", correctZone: 1500, type: "直辖市" },
+    { name: "厦门市", population: "528万", correctZone: 1500, type: "计划单列市" },
+    { name: "杭州市", population: "1220万", correctZone: 1500, type: "省会城市" },
+    { name: "苏州市", population: "1274万", correctZone: 1100, type: "人口>100万" },
+    { name: "温州市", population: "957万", correctZone: 1100, type: "人口>100万" },
+    { name: "佛山市", population: "950万", correctZone: 1100, type: "人口>100万" },
+    { name: "伊春市", population: "90万", correctZone: 800, type: "人口≤100万" },
+    { name: "七台河市", population: "72万", correctZone: 800, type: "人口≤100万" }
+];
+
+// calculation-game.js - 第10-20行
+this.deductionStandards = {
+    '北京': 1500,    // 直辖市
+    '厦门': 1500,    // 计划单列市
+    '杭州': 1500,    // 省会城市
+    '苏州': 1100,    // 人口>100万
+    '温州': 1100,    // 人口>100万
+    '佛山': 1100,    // 人口>100万
+    '伊春': 800,     // 人口≤100万
+    '七台河': 800    // 人口≤100万
+};
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 指定的8个城市
+        const requiredCities = [
+            { name: "北京市", short: "北京", zone: 1500, type: "直辖市" },
+            { name: "厦门市", short: "厦门", zone: 1500, type: "计划单列市" },
+            { name: "杭州市", short: "杭州", zone: 1500, type: "省会城市" },
+            { name: "苏州市", short: "苏州", zone: 1100, type: "人口>100万" },
+            { name: "温州市", short: "温州", zone: 1100, type: "人口>100万" },
+            { name: "佛山市", short: "佛山", zone: 1100, type: "人口>100万" },
+            { name: "伊春市", short: "伊春", zone: 800, type: "人口≤100万" },
+            { name: "七台河市", short: "七台河", zone: 800, type: "人口≤100万" }
+        ];
+        
+        // 需要清除的旧城市（示例）
+        const oldCities = ["上海市", "广州市", "深圳市", "宁波市", "湖州市", "舟山市", "无锡市", "南京市", "成都市", "武汉市", "衢州市", "丽水市"];
+        
+        async function verifyGameJs() {
+            const element = document.getElementById('gameJsVerification');
+            
+            try {
+                const response = await fetch('game.js');
+                const content = await response.text();
+                
+                // 查找城市数组
+                const citiesMatch = content.match(/this\.cities\s*=\s*\[([\s\S]*?)\]\s*;/);
+                
+                if (!citiesMatch) {
+                    element.className = 'verification-section error';
+                    element.innerHTML = '<h2>❌ game.js 验证失败</h2><p>未找到城市数据数组</p>';
+                    return;
+                }
+                
+                const citiesText = citiesMatch[1];
+                let foundCities = [];
+                let missingCities = [];
+                let oldCitiesFound = [];
+                
+                // 检查是否包含所有指定城市
+                requiredCities.forEach(city => {
+                    if (citiesText.includes(`"${city.name}"`)) {
+                        foundCities.push(city);
+                    } else {
+                        missingCities.push(city);
+                    }
+                });
+                
+                // 检查是否包含旧城市
+                oldCities.forEach(city => {
+                    if (citiesText.includes(`"${city}"`)) {
+                        oldCitiesFound.push(city);
+                    }
+                });
+                
+                // 显示结果
+                let html = '<h2>';
+                
+                if (missingCities.length === 0 && oldCitiesFound.length === 0) {
+                    html += '✅ game.js 验证通过';
+                    element.className = 'verification-section success';
+                } else {
+                    html += '⚠️ game.js 验证发现问题';
+                    element.className = 'verification-section warning';
+                }
+                
+                html += '</h2>';
+                
+                html += `<p>找到 ${foundCities.length}/8 个指定城市，${oldCitiesFound.length} 个旧城市残留</p>`;
+                
+                if (missingCities.length > 0) {
+                    html += '<p><strong>缺失城市：</strong>' + missingCities.map(c => c.name).join(', ') + '</p>';
+                }
+                
+                if (oldCitiesFound.length > 0) {
+                    html += '<p><strong>残留旧城市：</strong>' + oldCitiesFound.join(', ') + '</p>';
+                }
+                
+                // 显示找到的城市
+                html += '<div class="city-list">';
+                requiredCities.forEach(city => {
+                    const isFound = foundCities.some(fc => fc.name === city.name);
+                    const hasOld = oldCitiesFound.length > 0;
+                    
+                    html += `
+                        <div class="city-item ${isFound ? 'required' : 'missing'}">
+                            <div class="city-name">${city.name}</div>
+                            <div class="city-details">${city.type}</div>
+                            <div class="city-details">扣除标准: ¥${city.zone}/月</div>
+                            <div class="city-zone">${isFound ? '✅ 已找到' : '❌ 未找到'}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                element.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'verification-section error';
+                element.innerHTML = `<h2>❌ game.js 验证错误</h2><p>${error.message}</p>`;
+            }
+        }
+        
+        async function verifyCalculationJs() {
+            const element = document.getElementById('calculationJsVerification');
+            
+            try {
+                const response = await fetch('calculation-game.js');
+                const content = await response.text();
+                
+                // 查找扣除标准数据
+                const standardsMatch = content.match(/this\.deductionStandards\s*=\s*\{([\s\S]*?)\}\s*;/);
+                
+                if (!standardsMatch) {
+                    element.className = 'verification-section error';
+                    element.innerHTML = '<h2>❌ calculation-game.js 验证失败</h2><p>未找到扣除标准数据</p>';
+                    return;
+                }
+                
+                const standardsText = standardsMatch[1];
+                let foundCities = [];
+                let missingCities = [];
+                let oldCitiesFound = [];
+                
+                // 检查是否包含所有指定城市（短名称）
+                requiredCities.forEach(city => {
+                    if (standardsText.includes(`'${city.short}'`)) {
+                        foundCities.push(city);
+                    } else {
+                        missingCities.push(city);
+                    }
+                });
+                
+                // 检查旧城市
+                const oldCityShorts = ["上海", "广州", "深圳", "宁波", "湖州", "舟山", "无锡", "南京", "成都", "武汉", "衢州", "丽水"];
+                oldCityShorts.forEach(city => {
+                    if (standardsText.includes(`'${city}'`)) {
+                        oldCitiesFound.push(city);
+                    }
+                });
+                
+                // 显示结果
+                let html = '<h2>';
+                
+                if (missingCities.length === 0 && oldCitiesFound.length === 0) {
+                    html += '✅ calculation-game.js 验证通过';
+                    element.className = 'verification-section success';
+                } else {
+                    html += '⚠️ calculation-game.js 验证发现问题';
+                    element.className = 'verification-section warning';
+                }
+                
+                html += '</h2>';
+                
+                html += `<p>找到 ${foundCities.length}/8 个指定城市，${oldCitiesFound.length} 个旧城市残留</p>`;
+                
+                if (missingCities.length > 0) {
+                    html += '<p><strong>缺失城市：</strong>' + missingCities.map(c => c.short).join(', ') + '</p>';
+                }
+                
+                if (oldCitiesFound.length > 0) {
+                    html += '<p><strong>残留旧城市：</strong>' + oldCitiesFound.join(', ') + '</p>';
+                }
+                
+                element.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'verification-section error';
+                element.innerHTML = `<h2>❌ calculation-game.js 验证错误</h2><p>${error.message}</p>`;
+            }
+        }
+        
+        // 页面加载后执行验证
+        document.addEventListener('DOMContentLoaded', () => {
+            verifyGameJs();
+            verifyCalculationJs();
+        });
+    </script>
+</body>
+</html>

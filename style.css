@@ -1,0 +1,43 @@
+/* 城市类型样式 */
+.city-type {
+    font-size: 12px;
+    color: #666;
+    margin: 2px 0;
+    padding: 2px 6px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* 不同类型的颜色标识 */
+.city-type[data-type="直辖市"] {
+    background: #E3F2FD;
+    color: #1976D2;
+}
+
+.city-type[data-type="省会城市"] {
+    background: #E8F5E9;
+    color: #388E3C;
+}
+
+.city-type[data-type="计划单列市"] {
+    background: #FFF3E0;
+    color: #F57C00;
+}
+
+.city-type[data-type="人口>100万"] {
+    background: #FFF8E1;
+    color: #FF8F00;
+}
+
+.city-type[data-type="人口≤100万"] {
+    background: #F3E5F5;
+    color: #7B1FA2;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .materials-grid {
+        grid-template-columns: 1fr;
+    }
+}

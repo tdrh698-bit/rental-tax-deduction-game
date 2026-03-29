@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住房租金扣除游戏 - 简化稳定版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .game-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-header {
+            background: linear-gradient(135deg, #1E5AA8 0%, #2D7DD2 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        .game-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .game-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .game-content {
+            padding: 30px;
+        }
+        
+        .mission-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .mission-tab {
+            padding: 15px 25px;
+            background: #f5f7fa;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .mission-tab:hover {
+            background: #e3f2fd;
+        }
+        
+        .mission-tab.active {
+            background: #1E5AA8;
+            color: white;
+            border-color: #2D7DD2;
+        }
+        
+        .mission-content {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .mission-title {
+            color: #1E5AA8;
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .city-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .city-list {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .city-list h3 {
+            color: #1E5AA8;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .city-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .city-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+        
+        .city-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .city-info {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 3px dashed #ddd;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .drop-zone.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .zone-title {
+            color: #1E5AA8;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .zone-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+        
+        .zone-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .zone-content {
+            min-height: 120px;
+            margin-top: 15px;
+        }
+        
+        .dropped-city {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dropped-city.correct {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .dropped-city.incorrect {
+            border-left: 4px solid #F44336;
+        }
+        
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1E5AA8 0%, #2D7DD2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .result-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: 10px;
+            border-left: 4px solid #1E5AA8;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #F44336;
+        }
+        
+        .info {
+            color: #2196F3;
+        }
+        
+        .status-bar {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .status-bar.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-bar.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">🏠 住房租金扣除大挑战</div>
+            <div class="game-subtitle">掌握个人所得税住房租金专项附加扣除知识</div>
+            
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score">0</div>
+                    <div class="stat-label">当前得分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="progress">0/8</div>
+                    <div class="stat-label">城市分类</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="mission">1</div>
+                    <div class="stat-label">当前任务</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-content">
+            <div class="mission-tabs">
+                <div class="mission-tab active" onclick="switchMission(1)">任务一：城市分类</div>
+                <div class="mission-tab" onclick="switchMission(2)">任务二：合同审查</div>
+                <div class="mission-tab" onclick="switchMission(3)">任务三：扣除计算</div>
+                <div class="mission-tab" onclick="switchMission(4)">任务四：材料准备</div>
+            </div>
+            
+            <div class="mission-content">
+                <div id="mission1" class="mission-panel">
+                    <div class="mission-title">🏙️ 任务一：城市等级判断</div>
+                    <p>根据住房租金专项附加扣除政策，将8个城市拖拽到正确的扣除标准区域。</p>
+                    
+                    <div class="city-game">
+                        <div class="city-list">
+                            <h3>待分类城市</h3>
+                            <div id="cityList">
+                                <!-- 城市将由JavaScript生成 -->
+                            </div>
+                        </div>
+                        
+                        <div class="drop-zones">
+                            <div class="drop-zone" data-zone="1500" id="zone1500">
+                                <div class="zone-title">1500元/月</div>
+                                <div class="zone-amount">1500元</div>
+                                <div class="zone-desc">直辖市、省会城市、计划单列市</div>
+                                <div class="zone-content" id="zone1500Content"></div>
+                            </div>
+                            
+                            <div class="drop-zone" data-zone="1100" id="zone1100">
+                                <div class="zone-title">1100元/月</div>
+                                <div class="zone-amount">1100元</div>
+                                <div class="zone-desc">人口超过100万</div>
+                                <div class="zone-content" id="zone1100Content"></div>
+                            </div>
+                            
+                            <div class="drop-zone" data-zone="800" id="zone800">
+                                <div class="zone-title">800元/月</div>
+                                <div class="zone-amount">800元</div>
+                                <div class="zone-desc">人口不超过100万</div>
+                                <div class="zone-content" id="zone800Content"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button class="btn btn-primary" onclick="checkAnswers()">
+                            <span>✓</span> 检查答案
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetGame()">
+                            <span>↻</span> 重新开始
+                        </button>
+                    </div>
+                    
+                    <div id="resultArea" class="result-area">
+                        <p class="info">请将城市拖拽到相应的扣除标准区域，然后点击"检查答案"。</p>
+                    </div>
+                </div>
+                
+                <div id="mission2" class="mission-panel" style="display: none;">
+                    <div class="mission-title">📝 任务二：租赁合同审查</div>
+                    <p>任务二内容正在开发中...</p>
+                    <p>功能：审查租赁合同，找出5个不符合住房租金扣除要求的问题点。</p>
+                </div>
+                
+                <div id="mission3" class="mission-panel" style="display: none;">
+                    <div class="mission-title">🧮 任务三：扣除计算实战</div>
+                    <p>任务三内容正在开发中...</p>
+                    <p>功能：根据不同的家庭情况和城市标准，计算实际可以扣除的租金金额。</p>
+                </div>
+                
+                <div id="mission4" class="mission-panel" style="display: none;">
+                    <div class="mission-title">📁 任务四：申报材料准备</div>
+                    <p>任务四内容正在开发中...</p>
+                    <p>功能：在5分钟倒计时内，收集个人所得税申报所需的材料。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar" id="statusBar">
+            系统状态：正常 | 游戏已加载 | 8个城市数据就绪
+        </div>
+    </div>
+
+    <script>
+        // 城市数据
+        const cities = [
+            { name: "北京市", population: "2170万", correctZone: 1500, type: "直辖市" },
+            { name: "厦门市", population: "528万", correctZone: 1500, type: "计划单列市" },
+            { name: "杭州市", population: "1220万", correctZone: 1500, type: "省会城市" },
+            { name: "苏州市", population: "1274万", correctZone: 1100, type: "人口>100万" },
+            { name: "温州市", population: "957万", correctZone: 1100, type: "人口>100万" },
+            { name: "佛山市", population: "950万", correctZone: 1100, type: "人口>100万" },
+            { name: "伊春市", population: "90万", correctZone: 800, type: "人口≤100万" },
+            { name: "七台河市", population: "72万", correctZone: 800, type: "人口≤100万" }
+        ];
+        
+        // 游戏状态
+        let currentMission = 1;
+        let score = 0;
+        let draggedCity = null;
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('游戏初始化开始...');
+            updateStatus('系统初始化完成', 'success');
+            
+            // 初始化城市列表
+            initCityList();
+            
+            // 初始化拖拽功能
+            initDragAndDrop();
+            
+            // 更新UI
+            updateUI();
+            
+            console.log('游戏初始化完成');
+            updateStatus('游戏准备就绪，可以开始玩耍！', 'success');
+        });
+        
+        // 初始化城市列表
+        function initCityList() {
+            const cityList = document.getElementById('cityList');
+            if (!cityList) {
+                console.error('[修复] ' + '找不到城市列表元素');
+                updateStatus('错误：找不到城市列表元素', 'error');
+                return;
+            }
+            
+            cityList.innerHTML = '';
+            
+            cities.forEach(city => {
+                const cityItem = document.createElement('div');
+                cityItem.className = 'city-item';
+                cityItem.dataset.city = city.name;
+                cityItem.dataset.zone = city.correctZone;
+                cityItem.dataset.population = city.population;
+                cityItem.dataset.type = city.type;
+                cityItem.setAttribute('draggable', 'true');
+                
+                cityItem.innerHTML = `
+                    <div>
+                        <div class="city-name">${city.name}</div>
+                        <div class="city-info">${city.population} · ${city.type}</div>
+                    </div>
+                    <div style="color: #999;">⇄</div>
+                `;
+                
+                cityList.appendChild(cityItem);
+            });
+            
+            console.log(`已加载 ${cities.length} 个城市`);
+        }
+        
+        // 初始化拖拽功能
+        function initDragAndDrop() {
+            const cityItems = document.querySelectorAll('.city-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            // 城市项拖拽事件
+            cityItems.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedCity = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.city);
+                    item.style.opacity = '0.5';
+                    console.log(`开始拖拽: ${item.dataset.city}`);
+                });
+                
+                item.addEventListener('dragend', () => {
+                    item.style.opacity = '1';
+                    draggedCity = null;
+                });
+            });
+            
+            // 拖放区域事件
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('active');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('active');
+                });
+                
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('active');
+                    
+                    if (draggedCity) {
+                        const cityName = draggedCity.dataset.city;
+                        const cityZone = parseInt(draggedCity.dataset.zone);
+                        const targetZone = parseInt(zone.dataset.zone);
+                        const cityPopulation = draggedCity.dataset.population;
+                        const cityType = draggedCity.dataset.type;
+                        
+                        console.log(`放置 ${cityName} 到 ${targetZone}元区域`);
+                        
+                        // 从原位置移除
+                        draggedCity.remove();
+                        
+                        // 添加到拖放区域
+                        const droppedCity = document.createElement('div');
+                        droppedCity.className = 'dropped-city';
+                        
+                        // 检查是否正确
+                        const isCorrect = cityZone === targetZone;
+                        if (isCorrect) {
+                            droppedCity.classList.add('correct');
+                        } else {
+                            droppedCity.classList.add('incorrect');
+                        }
+                        
+                        droppedCity.innerHTML = `
+                            <div>
+                                <div style="font-weight: bold;">${cityName}</div>
+                                <div style="font-size: 12px; color: #666;">${cityPopulation} · ${cityType}</div>
+                            </div>
+                            <div style="color: #999;">${isCorrect ? '✓' : '✗'}</div>
+                        `;
+                        
+                        zone.querySelector('.zone-content').appendChild(droppedCity);
+                        
+                        // 更新UI
+                        updateUI();
+                        updateStatus(`已放置 ${cityName} 到 ${targetZone}元区域`, 'info');
+                    }
+                });
+            });
+        }
+        
+        // 切换任务
+        function switchMission(missionNumber) {
+            // 更新标签
+            document.querySelectorAll('.mission-tab').forEach((tab, index) => {
+                if (index + 1 === missionNumber) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // 更新内容
+            for (let i = 1; i <= 4; i++) {
+                const panel = document.getElementById(`mission${i}`);
+                if (panel) {
+                    panel.style.display = i === missionNumber ? 'block' : 'none';
+                }
+            }
+            
+            currentMission = missionNumber;
+            document.getElementById('mission').textContent = missionNumber;
+            
+            updateStatus(`切换到任务 ${missionNumber}`, 'info');
+        }
+        
+        // 检查答案
+        function checkAnswers() {
+            if (currentMission !== 1) return;
+            
+            const zones = [
+                { id: 'zone1500Content', amount: 1500 },
+                { id: 'zone1100Content', amount: 1100 },
+                { id: 'zone800Content', amount: 800 }
+            ];
+            
+            let correctCount = 0;
+            let totalCount = 0;
+            
+            zones.forEach(zone => {
+                const zoneElement = document.getElementById(zone.id);
+                const cities = zoneElement.querySelectorAll('.dropped-city');
+                
+                cities.forEach(city => {
+                    totalCount++;
+                    if (city.classList.contains('correct')) {
+                        correctCount++;
+                    }
+                });
+            });
+            
+            const totalCities = cities.length;
+            const placedCities = totalCount;
+            const score = placedCities > 0 ? Math.round((correctCount / placedCities) * 100) : 0;
+            
+            let resultHTML = '';
+            
+            if (placedCities === 0) {
+                resultHTML = '<p class="error">❌ 请先拖拽城市到相应的区域</p>';
+            } else if (correctCount === placedCities && placedCities === totalCities) {
+                resultHTML = `
+                    <p class="success">✅ 完美！全部正确！</p>
+                    <p>您正确分类了所有 ${totalCities} 个城市</p>
+                    <p>得分：${score}分</p>
+                    <p>🎉 恭喜完成任务一！</p>
+                `;
+                updateStatus('任务一完成！全部城市分类正确', 'success');
+            } else {
+                resultHTML = `
+                    <p class="info">📊 完成情况：</p>
+                    <p>已放置：${placedCities}/${totalCities} 个城市</p>
+                    <p>正确：${correctCount} 个，错误：${placedCities - correctCount} 个</p>
+                    <p>当前得分：${score}分</p>
+                    <p>请调整错误放置的城市到正确区域</p>
+                `;
+                updateStatus(`任务一进度：${placedCities}/${totalCities} 城市`, 'info');
+            }
+            
+            document.getElementById('resultArea').innerHTML = resultHTML;
+            
+            // 更新分数
+            document.getElementById('score').textContent = score;
+            document.getElementById('progress').textContent = `${placedCities}/${totalCities}`;
+        }
+        
+        // 重置游戏
+        function resetGame() {
+            if (currentMission !== 1) return;
+            
+            // 清空所有拖放区域
+            ['zone1500Content', 'zone1100Content', 'zone800Content'].forEach(id => {
+                const zone = document.getElementById(id);
+                if (zone) zone.innerHTML = '';
+            });
+            
+            // 重新初始化城市列表
+            initCityList();
+            initDragAndDrop();
+            
+            // 清空结果
+            document.getElementById('resultArea').innerHTML = 
+                '<p class="info">请将城市拖拽到相应的扣除标准区域，然后点击"检查答案"。</p>';
+            
+            // 重置UI
+            updateUI();
+            
+            updateStatus('游戏已重置，可以重新开始', 'info');
+        }
+        
+        // 更新UI
+        function updateUI() {
+            // 计算已放置的城市数量
+            const placedCities = 
+                document.querySelectorAll('.dropped-city').length;
+            const totalCities = cities.length;
+            
+            // 更新进度
+            document.getElementById('progress').textContent = 
+                `${placedCities}/${totalCities}`;
+            
+            // 计算分数（基于正确率）
+            let correctCount = 0;
+            document.querySelectorAll('.dropped-city.correct').forEach(() => {
+                correctCount++;
+            });
+            
+            const score = placedCities > 0 ? 
+                Math.round((correctCount / placedCities) * 100) : 0;
+            document.getElementById('score').textContent = score;
+        }
+        
+        // 更新状态栏
+        function updateStatus(message, type = 'info') {
+            const statusBar = document.getElementById('statusBar');
+            if (!statusBar) return;
+            
+            // 移除现有类
+            statusBar.classList.remove('success', 'error');
+            
+            // 添加新类
+            if (type === 'success') {
+                statusBar.classList.add('success');
+                statusBar.innerHTML = `✅ ${message}`;
+            } else if (type === 'error') {
+                statusBar.classList.add('error');
+                statusBar.innerHTML = `❌ ${message}`;
+            } else {
+                statusBar.innerHTML = `ℹ️ ${message}`;
+            }
+            
+            console.log(`[状态] ${message}`);
+        }
+        
+        // 自动初始化
+        setTimeout(() => {
+            updateStatus('住房租金扣除游戏已准备就绪', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>

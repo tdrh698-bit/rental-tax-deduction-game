@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 租房租金扣除大挑战（完整修复版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 增强样式 */
+        .game-area {
+            min-height: 500px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mission-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1E5AA8 0%, #2D7DD2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .status-info {
+            background: #e8f4fd;
+            border-left: 4px solid #1E5AA8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .debug-panel {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .debug-title {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .debug-content {
+            color: #333;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #F44336;
+        }
+        
+        .warning {
+            color: #FF9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-calculator"></i> 税务大师 - 租房租金扣除大挑战</h1>
+                <p class="subtitle">掌握住房租金专项附加扣除，轻松应对个人所得税申报</p>
+            </div>
+            <div class="user-info">
+                <div class="score">
+                    <i class="fas fa-star"></i>
+                    <span id="totalScore">0</span> 分
+                </div>
+                <div class="progress">
+                    <i class="fas fa-tasks"></i>
+                    <span id="progress">0/4</span> 任务
+                </div>
+            </div>
+        </div>
+
+        <!-- 任务导航 -->
+        <div class="mission-nav">
+            <div class="mission-card" onclick="switchMission(1)">
+                <div class="mission-icon" style="background: #4CAF50;">
+                    <i class="fas fa-city"></i>
+                </div>
+                <h3>任务一：城市等级判断</h3>
+                <p>将8个城市拖拽到正确的扣除标准区域</p>
+                <div class="mission-status" id="mission1Status">未开始</div>
+            </div>
+            
+            <div class="mission-card" onclick="switchMission(2)">
+                <div class="mission-icon" style="background: #2196F3;">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>任务二：租赁合同审查</h3>
+                <p>找出租赁合同中的5个问题点</p>
+                <div class="mission-status" id="mission2Status">未开始</div>
+            </div>
+            
+            <div class="mission-card" onclick="switchMission(3)">
+                <div class="mission-icon" style="background: #FF9800;">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>任务三：扣除计算实战</h3>
+                <p>4个真实场景的租金扣除计算</p>
+                <div class="mission-status" id="mission3Status">未开始</div>
+            </div>
+            
+            <div class="mission-card" onclick="switchMission(4)">
+                <div class="mission-icon" style="background: #9C27B0;">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>任务四：申报材料准备</h3>
+                <p>5分钟倒计时收集必须的申报材料</p>
+                <div class="mission-status" id="mission4Status">未开始</div>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="game-area" id="gameArea">
+            <div class="welcome-message">
+                <h2><i class="fas fa-play-circle"></i> 欢迎来到税务大师游戏！</h2>
+                <p>请点击上方的任务卡片开始游戏。每个任务都有完整的交互界面和计分系统。</p>
+                
+                <div class="status-info">
+                    <h3><i class="fas fa-info-circle"></i> 游戏说明</h3>
+                    <p>本游戏包含4个任务，帮助您掌握住房租金专项附加扣除知识：</p>
+                    <ul>
+                        <li><strong>任务一</strong>：学习不同城市的扣除标准（1500元/月、1100元/月、800元/月）</li>
+                        <li><strong>任务二</strong>：审查租赁合同，找出常见问题</li>
+                        <li><strong>任务三</strong>：实际计算不同场景下的租金扣除</li>
+                        <li><strong>任务四</strong>：准备个人所得税申报所需材料</li>
+                    </ul>
+                </div>
+                
+                <div class="mission-controls">
+                    <button class="btn btn-primary" onclick="switchMission(1)">
+                        <i class="fas fa-play"></i> 开始任务一
+                    </button>
+                    <button class="btn btn-primary" onclick="switchMission(2)">
+                        <i class="fas fa-play"></i> 开始任务二
+                    </button>
+                    <button class="btn btn-primary" onclick="switchMission(3)">
+                        <i class="fas fa-play"></i> 开始任务三
+                    </button>
+                    <button class="btn btn-primary" onclick="switchMission(4)">
+                        <i class="fas fa-play"></i> 开始任务四
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 调试面板 -->
+        <div class="debug-panel" id="debugPanel">
+            <div class="debug-title">
+                <span>系统状态</span>
+                <button class="btn btn-secondary" onclick="toggleDebug()" style="padding: 5px 10px; font-size: 12px;">
+                    <i class="fas fa-code"></i> 切换调试
+                </button>
+            </div>
+            <div class="debug-content" id="debugContent">
+                系统初始化中...
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>© 2026 税务大师游戏 | 住房租金专项附加扣除学习工具</p>
+            <p class="footer-links">
+                <a href="verify-cities.html" target="_blank">城市数据验证</a> |
+                <a href="check-qitaihe.html" target="_blank">问题诊断</a> |
+                <a href="test-game.html" target="_blank">综合测试</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript文件 -->
+    <script src="game.js"></script>
+    <script src="contract-game.js"></script>
+    <script src="calculation-game.js"></script>
+    <script src="materials-game.js"></script>
+    
+    <script>
+        // 全局游戏实例
+        let game = null;
+        let debugEnabled = true;
+        
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，开始初始化游戏...');
+            
+            try {
+                // 检查所有必要的游戏脚本
+                if (typeof TaxMasterGame === 'undefined') {
+                    logDebug('错误: TaxMasterGame 类未定义', 'error');
+                    return;
+                }
+                
+                if (typeof ContractGame === 'undefined') {
+                    logDebug('警告: ContractGame 类未定义，任务二可能无法运行', 'warning');
+                }
+                
+                if (typeof CalculationGame === 'undefined') {
+                    logDebug('警告: CalculationGame 类未定义，任务三可能无法运行', 'warning');
+                }
+                
+                if (typeof MaterialsGame === 'undefined') {
+                    logDebug('警告: MaterialsGame 类未定义，任务四可能无法运行', 'warning');
+                }
+                
+                // 初始化游戏
+                game = new TaxMasterGame();
+                window.game = game; // 暴露给全局
+                
+                logDebug('游戏初始化成功！', 'success');
+                logDebug(`找到 ${game.cities ? game.cities.length : 0} 个城市`, 'info');
+                
+                // 默认加载任务一
+                setTimeout(() => {
+                    game.renderMission1();
+                    logDebug('已加载任务一：城市等级判断', 'success');
+                    updateMissionStatus(1, '已加载');
+                }, 100);
+                
+            } catch (error) {
+                logDebug(`初始化错误: ${error.message}`, 'error');
+                console.error('游戏初始化错误:', error);
+            }
+        });
+        
+        // 全局任务切换函数
+        function switchMission(missionNumber) {
+            if (!game) {
+                logDebug('游戏未初始化，请刷新页面', 'error');
+                return;
+            }
+            
+            try {
+                logDebug(`切换到任务 ${missionNumber}...`, 'info');
+                
+                switch(missionNumber) {
+                    case 1:
+                        game.renderMission1();
+                        updateMissionStatus(1, '进行中');
+                        break;
+                    case 2:
+                        game.renderMission2();
+                        updateMissionStatus(2, '进行中');
+                        break;
+                    case 3:
+                        game.renderMission3();
+                        updateMissionStatus(3, '进行中');
+                        break;
+                    case 4:
+                        game.renderMission4();
+                        updateMissionStatus(4, '进行中');
+                        break;
+                    default:
+                        logDebug(`未知任务编号: ${missionNumber}`, 'error');
+                }
+                
+                logDebug(`任务 ${missionNumber} 加载成功`, 'success');
+                
+            } catch (error) {
+                logDebug(`任务切换错误: ${error.message}`, 'error');
+                console.error('任务切换错误:', error);
+            }
+        }
+        
+        // 更新任务状态显示
+        function updateMissionStatus(missionNumber, status) {
+            const statusElement = document.getElementById(`mission${missionNumber}Status`);
+            if (statusElement) {
+                statusElement.textContent = status;
+                
+                // 根据状态设置颜色
+                if (status === '已完成') {
+                    statusElement.style.color = '#4CAF50';
+                    statusElement.style.fontWeight = 'bold';
+                } else if (status === '进行中') {
+                    statusElement.style.color = '#2196F3';
+                    statusElement.style.fontWeight = 'bold';
+                } else if (status === '未开始') {
+                    statusElement.style.color = '#666';
+                }
+            }
+        }
+        
+        // 调试日志函数
+        function logDebug(message, type = 'info') {
+            if (!debugEnabled) return;
+            
+            const debugContent = document.getElementById('debugContent');
+            if (!debugContent) return;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span class="${type}">[${timestamp}] ${message}</span>`;
+            
+            debugContent.appendChild(logEntry);
+            
+            // 保持滚动到底部
+            debugContent.scrollTop = debugContent.scrollHeight;
+            
+            // 也输出到控制台
+            if (type === 'error') {
+                console.error(message);
+            } else if (type === 'warning') {
+                console.warn(message);
+            } else {
+                console.log(message);
+            }
+        }
+        
+        // 切换调试面板显示
+        function toggleDebug() {
+            debugEnabled = !debugEnabled;
+            const debugPanel = document.getElementById('debugPanel');
+            const debugContent = document.getElementById('debugContent');
+            
+            if (debugEnabled) {
+                debugPanel.style.display = 'block';
+                logDebug('调试模式已开启', 'success');
+            } else {
+                debugPanel.style.display = 'none';
+                console.log('调试模式已关闭');
+            }
+        }
+        
+        // 自动检查城市数据
+        function checkCityData() {
+            if (!game || !game.cities) {
+                logDebug('无法检查城市数据：游戏未初始化', 'error');
+                return;
+            }
+            
+            logDebug('开始检查城市数据...', 'info');
+            logDebug(`找到 ${game.cities.length} 个城市:`, 'info');
+            
+            game.cities.forEach(city => {
+                logDebug(`${city.name} - ${city.population} - ${city.correctZone}元/月 - ${city.type || '未分类'}`, 'info');
+            });
+            
+            // 检查是否包含所有8个指定城市
+            const requiredCities = ['北京市', '厦门市', '杭州市', '苏州市', '温州市', '佛山市', '伊春市', '七台河市'];
+            const missingCities = requiredCities.filter(city => 
+                !game.cities.some(c => c.name === city)
+            );
+            
+            if (missingCities.length === 0) {
+                logDebug('✅ 所有8个指定城市都存在', 'success');
+            } else {
+                logDebug(`❌ 缺少城市: ${missingCities.join(', ')}`, 'error');
+            }
+        }
+        
+        // 页面加载后自动检查
+        setTimeout(() => {
+            if (game) {
+                checkCityData();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

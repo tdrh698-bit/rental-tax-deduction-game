@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模块二优化：合同审查实践（正确答案选项版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1E5AA8;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --light: #F5F7FA;
+            --dark: #333333;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .contract-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .contract-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 6px solid var(--primary);
+        }
+        
+        .contract-header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .contract-header p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        /* 游戏区域 */
+        .contract-game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .contract-game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 合同区域 */
+        .contract-paper {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .contract-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .contract-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .contract-section h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .contract-section p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        /* 问题区域 */
+        .problem-area {
+            background: #FFF3CD;
+            border: 2px dashed var(--warning);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .problem-area:hover {
+            background: #FFEAA7;
+            transform: translateY(-2px);
+        }
+        
+        .problem-area::after {
+            content: '?';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--warning);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .problem-area.fixed {
+            background: #D4EDDA;
+            border: 2px solid var(--success);
+            color: #155724;
+        }
+        
+        .problem-area.fixed::after {
+            content: '✓';
+            background: var(--success);
+        }
+        
+        /* 答案选项区域 */
+        .answers-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .answers-title {
+            color: var(--primary);
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .problem-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .problem-card.fixed {
+            border-left-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .problem-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+        
+        .answer-options {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .answer-option {
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .answer-option:hover {
+            border-color: var(--primary);
+            background: #E3F2FD;
+        }
+        
+        .answer-option.selected {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .answer-option.correct {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .answer-option.incorrect {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+        
+        .option-marker {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            background: #757575;
+        }
+        
+        .answer-option.selected .option-marker {
+            background: var(--success);
+        }
+        
+        .answer-option.correct .option-marker {
+            background: var(--success);
+        }
+        
+        .answer-option.incorrect .option-marker {
+            background: var(--danger);
+        }
+        
+        /* 控制区域 */
+        .controls-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        /* 结果区域 */
+        .result-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .result-area.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-title {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-item {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .knowledge-summary {
+            background: #E3F2FD;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .knowledge-summary h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .knowledge-summary ul {
+            padding-left: 20px;
+        }
+        
+        .knowledge-summary li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        /* 反馈消息 */
+        .feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.success {
+            background: var(--success);
+        }
+        
+        .feedback.error {
+            background: var(--danger);
+        }
+        
+        .feedback.info {
+            background: var(--primary);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="contract-container">
+        <!-- 头部 -->
+        <div class="contract-header">
+            <h1><i class="fas fa-file-contract"></i> 模块二：合同审查实践（优化版）</h1>
+            <p>审查下面的租赁合同，为每个问题选择正确的修复方案。全部正确后即可通关。</p>
+        </div>
+        
+        <!-- 游戏区域 -->
+        <div class="contract-game-area">
+            <!-- 合同区域 -->
+            <div class="contract-paper">
+                <div class="contract-title">房屋租赁合同</div>
+                
+                <div class="contract-section">
+                    <h4>第一条 出租人信息</h4>
+                    <p>出租人：<span class="problem-area" data-problem="1">张先生</span></p>
+                    <p>联系电话：13800138000</p>
+                </div>
+                
+                <div class="contract-section">
+                    <h4>第二条 房屋信息</h4>
+                    <p>房屋坐落：<span class="problem-area" data-problem="2">杭州市西湖区文三路</span></p>
+                    <p>房屋面积：85平方米</p>
+                    <p>房屋用途：居住</p>
+                </div>
+                
+                <div class="contract-section">
+                    <h4>第三条 租赁期限</h4>
+                    <p>租赁期限：2024年1月1日至2024年12月31日</p>
+                    <p>租赁方式：整租</p>
+                </div>
+                
+                <div class="contract-section">
+                    <h4>第四条 租金及支付</h4>
+                    <p>月租金：<span class="problem-area" data-problem="3">2000元</span></p>
+                    <p>支付方式：银行转账</p>
+                    <p>支付日期：每月5日前</p>
+                </div>
+                
+                <div class="contract-section">
+                    <h4>第五条 其他约定</h4>
+                    <p>租赁合同<span class="problem-area" data-problem="4">已签订</span>。</p>
+                    <p>房屋<span class="problem-area" data-problem="5">产权清晰</span>。</p>
+                    <p>双方已阅读并理解本合同所有条款。</p>
+                </div>
+            </div>
+            
+            <!-- 答案选项区域 -->
+            <div class="answers-area">
+                <div class="answers-title">
+                    <i class="fas fa-check-circle"></i> 请为每个问题选择正确的修复方案
+                </div>
+                
+                <!-- 问题1 -->
+                <div class="problem-card" id="problem1">
+                    <div class="problem-question">
+                        问题1：出租人信息不完整
+                    </div>
+                    <p>当前内容：张先生</p>
+                    
+                    <div class="answer-options">
+                        <div class="answer-option" data-problem="1" data-answer="A">
+                            <div class="option-marker">A</div>
+                            <div class="option-text">张先生 (身份证: 330102198501012345)</div>
+                        </div>
+                        <div class="answer-option" data-problem="1" data-answer="B">
+                            <div class="option-marker">B</div>
+                            <div class="option-text">张先生 (联系电话: 13800138000)</div>
+                        </div>
+                        <div class="answer-option" data-problem="1" data-answer="C">
+                            <div class="option-marker">C</div>
+                            <div class="option-text">张先生 (工作单位: 杭州某公司)</div>
+                        </div>
+                        <div class="answer-option" data-problem="1" data-answer="D">
+                            <div class="option-marker">D</div>
+                            <div class="option-text">张先生 (住址: 杭州市西湖区)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 问题2 -->
+                <div class="problem-card" id="problem2">
+                    <div class="problem-question">
+                        问题2：地址不完整
+                    </div>
+                    <p>当前内容：杭州市西湖区文三路</p>
+                    
+                    <div class="answer-options">
+                        <div class="answer-option" data-problem="2" data-answer="A">
+                            <div class="option-marker">A</div>
+                            <div class="option-text">杭州市西湖区</div>
+                        </div>
+                        <div class="answer-option" data-problem="2" data-answer="B">
+                            <div class="option-marker">B</div>
+                            <div class="option-text">杭州市西湖区文三路123号西湖花园3栋2单元501室</div>
+                        </div>
+                        <div class="answer-option" data-problem="2" data-answer="C">
+                            <div class="option-marker">C</div>
+                            <div class="option-text">杭州市文三路某小区</div>
+                        </div>
+                        <div class="answer-option" data-problem="2" data-answer="D">
+                            <div class="option-marker">D</div>
+                            <div class="option-text">浙江省杭州市西湖区</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 问题3 -->
+                <div class="problem-card" id="problem3">
+                    <div class="problem-question">
+                        问题3：租金金额格式不规范
+                    </div>
+                    <p>当前内容：2000元</p>
+                    
+                    <div class="answer-options">
+                        <div class="answer-option" data-problem="3" data-answer="A">
+                            <div class="option-marker">A</div>
+                            <div class="option-text">人民币贰仟元整（¥2000）</div>
+                        </div>
+                        <div class="answer-option" data-problem="3" data-answer="B">
+                            <div class="option-marker">B</div>
+                            <div class="option-text">2000元人民币</div>
+                        </div>
+                        <div class="answer-option" data-problem="3" data-answer="C">
+                            <div class="option-marker">C</div>
+                            <div class="option-text">¥2000.00</div>
+                        </div>
+                        <div class="answer-option" data-problem="3" data-answer="D">
+                            <div class="option-marker">D</div>
+                            <div class="option-text">两千元整</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 问题4 -->
+                <div class="problem-card" id="problem4">
+                    <div class="problem-question">
+                        问题4：缺失租赁合同备案信息
+                    </div>
+                    <p>当前内容：已签订</p>
+                    
+                    <div class="answer-options">
+                        <div class="answer-

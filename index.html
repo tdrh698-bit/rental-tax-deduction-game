@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 租房租金扣除大挑战</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1E5AA8;
+            --secondary-blue: #2D7DD2;
+            --accent-green: #4CAF50;
+            --warning-red: #F44336;
+            --light-gray: #F5F7FA;
+            --dark-gray: #333333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark-gray);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 头部样式 */
+        .header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 6px solid var(--primary-blue);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            background: var(--primary-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .logo-text h1 {
+            color: var(--primary-blue);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .logo-text p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .tax-coin {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .level-badge {
+            background: var(--accent-green);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        /* 游戏区域 */
+        .game-area {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .mission-list h3 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .mission-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .mission-item:hover {
+            background: var(--light-gray);
+            transform: translateX(5px);
+        }
+        
+        .mission-item.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .mission-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .mission-item.active .mission-icon {
+            background: white;
+            color: var(--primary-blue);
+        }
+        
+        .mission-item:not(.active) .mission-icon {
+            background: var(--light-gray);
+            color: var(--primary-blue);
+        }
+        
+        .mission-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .mission-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .progress-bar {
+            margin-top: 25px;
+        }
+        
+        .progress-bar h4 {
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+        
+        .progress-container {
+            height: 10px;
+            background: var(--light-gray);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), #8BC34A);
+            width: 25%;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+        
+        /* 主游戏内容 */
+        .main-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 600px;
+        }
+        
+        .mission-title {
+            color: var(--primary-blue);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .mission-title i {
+            font-size: 28px;
+        }
+        
+        /* 城市拖拽游戏 */
+        .city-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .city-list {
+            background: var(--light-gray);
+            border-radius: var(--radius);
+            padding: 20px;
+            min-height: 300px;
+        }
+        
+        .city-list h4 {
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+        
+        .city-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .city-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .city-name {
+            font-weight: bold;
+        }
+        
+        .city-population {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .drop-zones {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: var(--light-gray);
+            border-radius: var(--radius);
+            padding: 20px;
+            min-height: 300px;
+            border: 3px dashed #ccc;
+        }
+        
+        .drop-zone.active {
+            border-color: var(--accent-green);
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .zone-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+        }
+        
+        .deduction-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-green);
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .zone-content {
+            min-height: 200px;
+            margin-top: 15px;
+        }
+        
+        .dropped-city {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .dropped-city.correct {
+            border-left: 4px solid var(--accent-green);
+        }
+        
+        .dropped-city.incorrect {
+            border-left: 4px solid var(--warning-red);
+        }
+        
+        /* 合同审查游戏 */
+        .contract-game {
+            margin-top: 20px;
+        }
+        
+        .contract-paper {
+            background: #fff8e1;
+            border: 2px solid #ffd54f;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            font-family: 'SimSun', serif;
+            line-height: 1.8;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .contract-paper:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 10px,
+                #ffd54f 10px,
+                #ffd54f 20px
+            );
+        }
+        
+        .contract-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        
+        .contract-section {
+            margin-bottom: 20px;
+        }
+        
+        .contract-field {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .field-label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #333;
+        }
+        
+        .field-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #999;
+            padding: 5px;
+            font-family: inherit;
+            font-size: inherit;
+            width: 200px;
+        }
+        
+        .field-input:focus {
+            outline: none;
+            border-bottom-color: var(--primary-blue);
+        }
+        
+        .problem-area {
+            background: rgba(244, 67, 54, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .problem-area:hover {
+            background: rgba(244, 67, 54, 0.2);
+        }
+        
+        .problem-area i {
+            color: var(--warning-red);
+            margin-right: 8px;
+        }
+        
+        /* 游戏控制 */
+        .game-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--light-gray);
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark-gray);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        /* 提示系统 */
+        .hint-system {
+            background: #e3f2fd;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hint-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .hint-bubble {
+            background: var(--primary-blue);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .city-game {
+                grid-template-columns: 1fr;
+            }
+            
+            .drop-zones {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .user-info {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* 分数显示 */
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+        
+        /* 选择题样式 */
+        .quiz-options {
+            margin: 15px 0;
+        }
+        
+        .quiz-options label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quiz-options label:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+        }
+        
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>节税神器</h1>
+                    <p>住房租金扣除大挑战</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="tax-coin">
+                    <i class="fas fa-coins"></i>
+                    <span>250 税币</span>
+                </div>
+                <div class="level-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>税务学徒</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 游戏区域 -->
+        <div class="game-area">
+            <!-- 侧边栏 -->
+            <aside class="sidebar">
+                <div class="mission-list">
+                    <h3><i class="fas fa-tasks"></i> 关卡任务</h3>
+                    <div class="mission-item active" onclick="switchMission(1)">
+                        <div class="mission-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="mission-info">
+                            <h4>任务一：城市等级判断</h4>
+                            <p>匹配城市与扣除标准</p>
+                        </div>
+                    </div>
+                    <div class="mission-item" onclick="switchMission(2)">
+                        <div class="mission-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="mission-info">
+                            <h4>任务二：合同审查</h4>
+                            <p>检查租赁合同完整性</p>
+                        </div>
+                    </div>
+                    <div class="mission-item" onclick="switchMission(3)">
+                        <div class="mission-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="mission-info">
+                            <h4>任务三：扣除计算</h4>
+                            <p>计算实际扣除金额</p>
+                        </div>
+                    </div>
+                    <div class="mission-item" onclick="switchMission(4)">
+                        <div class="mission-icon">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div class="mission-info">
+                            <h4>任务四：材料准备</h4>
+                            <p>收集申报所需材料</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <h4><i class="fas fa-chart-line"></i> 关卡进度</h4>
+                    <div class="progress-container">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p style="text-align: center; margin-top: 10px; font-size: 14px;">25% 完成</p>
+                </div>
+            </aside>
+
+            <!-- 主内容 -->
+            <main class="main-content">
+                <!-- 任务一内容将由JavaScript动态加载 -->
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript文件 -->
+    <script src="game.js"></script>
+    <script src="contract-game.js"></script>
+    <script src="calculation-game.js"></script>
+    <script src="materials-game.js"></script>
+    
+    <script>
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化游戏
+            window.game = new TaxMasterGame();
+            
+            // 默认加载任务一
+            window.game.renderMission1();
+        });
+        
+        // 全局任务切换函数
+        function switchMission(missionNumber) {
+            if (window.game) {
+                window.game.switchMission(missionNumber);
+            }
+        }
+    </script>
+</body>
+</html>

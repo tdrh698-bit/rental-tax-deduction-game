@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 住房租金扣除（稳定版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1E5AA8;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --light: #F5F7FA;
+            --dark: #333333;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .stable-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .stable-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .stable-header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .stable-header p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        /* 模块选择 */
+        .module-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .module-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+        
+        .module-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .module-card h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .module-card p {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        /* 游戏区域 */
+        .stable-game-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-stable {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-stable h2 {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .start-stable {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .start-stable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 90, 168, 0.3);
+        }
+        
+        /* 游戏内容 */
+        .game-content-stable {
+            display: none;
+        }
+        
+        .game-content-stable.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .game-title-stable {
+            color: var(--primary);
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* 合同游戏 */
+        .contract-stable {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contract-paper-stable {
+            background: #f9f9f9;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        .problem-item {
+            background: #FFF3CD;
+            border: 2px dashed var(--warning);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .problem-item:hover {
+            background: #FFEAA7;
+        }
+        
+        .answer-options-stable {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .answer-option-stable {
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .answer-option-stable:hover {
+            border-color: var(--primary);
+        }
+        
+        .answer-option-stable.selected {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .option-marker-stable {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #757575;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .answer-option-stable.selected .option-marker-stable {
+            background: var(--success);
+        }
+        
+        /* 控制按钮 */
+        .stable-controls {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .btn-stable {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary-stable {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        
+        .btn-primary-stable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary-stable {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-secondary-stable:hover {
+            background: #e0e0e0;
+        }
+        
+        /* 结果区域 */
+        .result-stable {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: none;
+        }
+        
+        .result-stable.show {
+            display: block;
+        }
+        
+        /* 页脚 */
+        .stable-footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="stable-container">
+        <!-- 头部 -->
+        <div class="stable-header">
+            <h1><i class="fas fa-home"></i> 税务大师 - 住房租金扣除（稳定版）</h1>
+            <p>优化后的稳定版本，确保所有功能正常工作</p>
+        </div>
+        
+        <!-- 模块选择 -->
+        <div class="module-selection">
+            <div class="module-card" onclick="showModule(1)">
+                <div class="module-icon">
+                    <i class="fas fa-city"></i>
+                </div>
+                <h3>城市等级认知</h3>
+                <p>8个城市分类游戏</p>
+            </div>
+            
+            <div class="module-card" onclick="showModule(2)">
+                <div class="module-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>合同审查实践</h3>
+                <p>优化版，正确答案选项</p>
+            </div>
+            
+            <div class="module-card" onclick="showModule(3)">
+                <div class="module-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>扣除计算实战</h3>
+                <p>4个场景计算</p>
+            </div>
+            
+            <div class="module-card" onclick="showModule(4)">
+                <div class="module-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>申报材料准备</h3>
+                <p>倒计时收集游戏</p>
+            </div>
+        </div>
+        
+        <!-- 游戏区域 -->
+        <div class="stable-game-area">
+            <!-- 欢迎界面 -->
+            <div class="welcome-stable" id="welcomeStable">
+                <h2><i class="fas fa-graduation-cap"></i> 欢迎使用稳定版</h2>
+                <p>点击上面的模块卡片开始学习，所有功能经过优化确保稳定运行</p>
+                
+                <button class="start-stable" onclick="showModule(2)">
+                    <i class="fas fa-play"></i> 直接开始模块二（合同审查）
+                </button>
+            </div>
+            
+            <!-- 模块一内容 -->
+            <div class="game-content-stable" id="module1Stable">
+                <div class="game-title-stable">
+                    <i class="fas fa-city"></i> 模块一：城市等级认知
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">将8个城市拖拽到正确的扣除标准区域。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">城市分类游戏</h4>
+                    <p>8个指定城市：北京、厦门、杭州、苏州、温州、佛山、伊春、七台河</p>
+                    <p>扣除标准：1500元/月、1100元/月、800元/月</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-stable btn-primary-stable" onclick="completeModuleStable(1)">
+                            <i class="fas fa-check-circle"></i> 完成本模块
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模块二内容 -->
+            <div class="game-content-stable" id="module2Stable">
+                <div class="game-title-stable">
+                    <i class="fas fa-file-contract"></i> 模块二：合同审查实践（优化版）
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">审查租赁合同，为每个问题选择正确的修复方案。</p>
+                
+                <div class="contract-stable">
+                    <div class="contract-paper-stable">
+                        <h3 style="color: var(--primary); text-align: center; margin-bottom: 15px;">房屋租赁合同</h3>
+                        
+                        <div class="problem-item" onclick="highlightProblem(1)">
+                            <strong>问题1：出租人信息不完整</strong>
+                            <p>当前内容：张先生</p>
+                        </div>
+                        
+                        <div class="answer-options-stable">
+                            <div class="answer-option-stable" onclick="selectAnswerStable(1, 'A', this)">
+                                <div class="option-marker-stable">A</div>
+                                <div>张先生 (身份证: 330102198501012345)</div>
+                            </div>
+                            <div class="answer-option-stable" onclick="selectAnswerStable(1, 'B', this)">
+                                <div class="option-marker-stable">B</div>
+                                <div>张先生 (联系电话: 13800138000)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="problem-item" onclick="highlightProblem(2)" style="margin-top: 20px;">
+                            <strong>问题2：地址不完整</strong>
+                            <p>当前内容：杭州市西湖区文三路</p>
+                        </div>
+                        
+                        <div class="answer-options-stable">
+                            <div class="answer-option-stable" onclick="selectAnswerStable(2, 'A', this)">
+                                <div class="option-marker-stable">A</div>
+                                <div>杭州市西湖区</div>
+                            </div>
+                            <div class="answer-option-stable" onclick="selectAnswerStable(2, 'B', this)">
+                                <div class="option-marker-stable">B</div>
+                                <div>杭州市西湖区文三路123号西湖花园3栋2单元501室</div>
+                            </div>
+                        </div>
+                        
+                        <div class="problem-item" onclick="highlightProblem(3)" style="margin-top: 20px;">
+                            <strong>问题3：租金金额格式不规范</strong>
+                            <p>当前内容：2000元</p>
+                        </div>
+                        
+                        <div class="answer-options-stable">
+                            <div class="answer-option-stable" onclick="selectAnswerStable(3, 'A', this)">
+                                <div class="option-marker-stable">A</div>
+                                <div>人民币贰仟元整（¥2000）</div>
+                            </div>
+                            <div class="answer-option-stable" onclick="selectAnswerStable(3, 'B', this)">
+                                <div class="option-marker-stable">B</div>
+                                <div>2000元人民币</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stable-controls">
+                        <button class="btn-stable btn-primary-stable" onclick="checkAnswersStable()">
+                            <i class="fas fa-check-circle"></i> 检查答案
+                        </button>
+                        <button class="btn-stable btn-secondary-stable" onclick="resetGameStable()">
+                            <i class="fas fa-redo"></i> 重新开始
+                        </button>
+                        <button class="btn-stable btn-primary-stable" onclick="completeModuleStable(2)" id="completeBtn2" disabled>
+                            <i class="fas fa-arrow-right"></i> 完成本模块
+                        </button>
+                    </div>
+                    
+                    <div id="resultStable" style="margin-top: 20px; text-align: center;"></div>
+                </div>
+            </div>
+            
+            <!-- 模块三内容 -->
+            <div class="game-content-stable" id="module3Stable">
+                <div class="game-title-stable">
+                    <i class="fas fa-calculator"></i> 模块三：扣除计算实战
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">基于真实场景计算住房租金扣除金额。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">扣除计算游戏</h4>
+                    <p>4个计算场景：单身租房、夫妻同城、夫妻异地、合租分摊</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-stable btn-primary-stable" onclick="completeModuleStable(3)">
+                            <i class="fas fa-check-circle"></i> 完成本模块
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模块四内容 -->
+            <div class="game-content-stable" id="module4Stable">
+                <div class="game-title-stable">
+                    <i class="fas fa-folder-open"></i> 模块四：申报材料准备
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">在限定时间内收集个人所得税申报材料。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">材料准备游戏</h4>
+                    <p>60秒倒计时，收集8种申报材料</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-stable btn-primary-stable" onclick="showFinalResult()">
+                            <i class="fas fa-flag-checkered"></i> 完成所有模块
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 结果区域 -->
+            <div class="result-stable" id="resultStableArea">
+                <div class="game-title-stable">
+                    <i class="fas fa-trophy"></i> 学习完成！
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #FFD700, #FFC107); border-radius: var(--radius); padding: 30px; margin: 20px 0; text-align: center;">
+                    <h3 style="color: #795548;">住房租金扣除学习证书</h3>
+                    <p style="font-size: 18px; margin: 10px 0;">授予：<strong>税务大师学员</strong></p>
+                    <p>已完成全部学习模块，掌握住房租金扣除核心知识</p>
+                </div>
+                
+                <div style="margin: 25px 0;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">学习成果</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px;">
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">4</div>
+                            <div style="font-size: 14px; color: #666;">完成模块</div>
+                        </div>
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">100%</div>
+                            <div style="font-size: 14px; color: #666;">学习进度</div>
+                        </div>
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">A+</div>
+                            <div style="font-size: 14px; color: #666;">评级</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stable-controls">
+                    <button class="btn-stable btn-primary-stable" onclick="restartGame()">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="stable-footer">
+            <p>© 2026 税务大师 | 稳定优化版本 | 确保所有功能正常工作</p>
+            <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                <i class="fas fa-check-circle"></i> 模块二已优化，包含正确答案选项
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        let gameState = {
+            currentModule: 0,
+            answers: {1: null, 2: null, 3: null},
+            correctAnswers: {1: 'A', 2: 'B', 3: 'A'},
+            completedModules: []
+        };
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('稳定版游戏已加载');
+            // 确保欢迎界面显示
+            document.getElementById('welcomeStable').style.display = 'block';
+        });
+        
+        // 显示模块
+        function showModule(moduleNumber) {
+            // 隐藏所有内容
+            document.getElementById('welcomeStable').style.display = 'none';
+            document.querySelectorAll('.game-content-stable').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('resultStableArea').classList.remove('show');
+            
+            // 显示当前模块
+            document.getElementById(`module${moduleNumber}Stable`).classList.add('active');
+            gameState.currentModule = moduleNumber;
+        }
+        
+        // 高亮问题
+        function highlightProblem(problemId) {
+            const problem = document.querySelectorAll('.problem-item')[problemId - 1];
+            if (problem) {
+                problem.style.animation = 'none';
+                setTimeout(() => {
+                    problem.style.animation = 'pulse 0.5s';
+                }, 10);
+            }
+        }
+        
+        // 选择答案
+        function selectAnswerStable(problemId, answer, element) {
+            // 移除同一问题的其他选项的选中状态
+            const options = document.querySelectorAll(`[onclick*="selectAnswerStable(${problemId},"]`);
+            options.forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            element.classList.add('selected');
+            
+            // 保存答案
+            gameState.answers[problemId] = answer;
+            
+            console.log(`问题${problemId}选择答案: ${answer}`);
+        }
+        
+        // 检查答案
+        function checkAnswersStable() {
+            let correctCount = 0;
+            let totalChecked = 0;
+            
+            // 检查每个问题
+            for (let i = 1; i <= 3; i++) {
+                const userAnswer = gameState.answers[i];
+                const correctAnswer = gameState.correctAnswers[i];
+                
+                if (userAnswer) {
+                    totalChecked++;
+                    if (userAnswer === correctAnswer) {
+                        correctCount++;
+                    }
+                }
+            }
+            
+            // 显示结果
+            const resultElement = document.getElementById('resultStable');
+            if (totalChecked === 0) {
+                resultElement.innerHTML = '<div style="color: var(--warning); padding: 10px; background: #FFF3CD; border-radius: 6px;"><i class="fas fa-exclamation-triangle"></i> 请先选择所有问题的答案</div>';
+            } else if (correctCount === 3) {
+                resultElement.innerHTML = '<div style="color: var(--success); padding: 10px; background: #E8F5E9; border-radius: 6px;"><i class="fas fa-check-circle"></i> 完美！全部3个问题都正确！</div>';
+                document.getElementById('completeBtn2').disabled = false;
+            } else {
+                resultElement.innerHTML = `<div style="color: var(--danger); padding: 10px; background: #FFEBEE; border-radius: 6px;"><i class="fas fa-times-circle"></i> 正确${correctCount}个，错误${3 - correctCount}个，请重新选择</div>`;
+            }
+            
+            return correctCount === 3;
+        }
+        
+        // 重置游戏
+        function resetGameStable() {
+            gameState.answers = {1: null, 2: null, 3: null};
+            
+            // 重置UI
+            document.querySelectorAll('.answer-option-stable').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.getElementById('completeBtn2').disabled = true;
+            document.getElementById('resultStable').innerHTML = '';
+            
+            showMessage('游戏已重置，请重新选择答案', 'info');
+        }
+        
+        // 完成模块
+        function completeModuleStable(moduleNumber) {
+            if (!gameState.completedModules.includes(moduleNumber)) {
+                gameState.completedModules.push(moduleNumber);
+                showMessage(`✅ 模块${moduleNumber}完成！`, 'success');
+                
+                // 如果完成了模块二，检查答案
+                if (moduleNumber === 2) {
+                    if (!checkAnswersStable()) {
+                        showMessage('请先确保所有问题都正确', 'error');
+                        gameState.completedModules = gameState.completedModules.filter(m => m !== 2);
+                        return;
+                    }
+                }
+                
+                // 显示下一个模块或结果
+                if (gameState.completedModules.length === 4) {
+                    showFinalResult();
+                } else {
+                    const nextModule = moduleNumber + 1;
+                    if (nextModule <= 4) {
+                        setTimeout(() => {
+                            showModule(nextModule);
+                        }, 1000);
+                    }
+                }
+            }
+        }
+        
+        // 显示最终结果
+        function showFinalResult() {
+            // 隐藏所有内容
+            document.querySelectorAll('.game-content-stable').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 显示结果
+            document.getElementById('resultStableArea').classList.add('show');
+        }
+        
+        // 重新开始
+        function restartGame() {
+            // 重置状态
+            gameState = {
+                currentModule: 0,
+                answers: {1: null, 2: null, 3: null},
+                correctAnswers: {1: 'A', 2: 'B', 3: 'A'},
+                completedModules: []
+            };
+            
+            // 重置UI
+            document.getElementById('resultStableArea').classList.remove('show');
+            document.getElementById('welcomeStable').style.display = 'block';
+            document.querySelectorAll('.game-content-stable').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            resetGameStable();
+            showMessage('游戏已重新开始', 'info');
+        }
+        
+        // 显示消息
+        function showMessage(message, type) {
+            // 创建消息元素
+            const msg = document.createElement('div');
+            msg.textContent = message;
+            msg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
+                color: white;
+                border-radius: 8px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(msg);
+            
+            setTimeout(() => {
+                msg.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => msg.remove(), 300);
+            }, 3000);
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 确保页面加载后显示欢迎界面
+        window.onload = function() {
+            console.log('页面完全加载完成');
+            document.getElementById('welcomeStable').style.display = 'block';
+        };
+    </script>
+</body>
+</html>

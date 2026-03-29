@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 住房租金扣除（完整通关版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1E5AA8;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --light: #F5F7FA;
+            --dark: #333333;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .final-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .final-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 6px solid var(--primary);
+            border-right: 6px solid var(--success);
+        }
+        
+        .final-header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .final-header p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        .integration-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        /* 模块导航 */
+        .final-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .final-module {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .final-module:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .final-module.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #e8f4fd 0%, white 100%);
+        }
+        
+        .final-module.completed {
+            border-color: var(--success);
+        }
+        
+        .final-module.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .module-number {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .final-module.completed .module-number {
+            background: var(--success);
+        }
+        
+        .module-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .final-module.completed .module-icon {
+            color: var(--success);
+        }
+        
+        .final-module h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .final-module.completed h3 {
+            color: var(--success);
+        }
+        
+        .module-status {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .status-active { background: #e3f2fd; color: var(--primary); }
+        .status-completed { background: #e8f5e9; color: var(--success); }
+        .status-locked { background: #f5f5f5; color: #999; }
+        
+        /* 游戏区域 */
+        .final-game-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-final {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-final h2 {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .start-final {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .start-final:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 90, 168, 0.3);
+        }
+        
+        /* 游戏内容 */
+        .final-game-content {
+            display: none;
+        }
+        
+        .final-game-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .game-title-final {
+            color: var(--primary);
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* 模块二特定样式 */
+        .contract-game-final {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .contract-game-final {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .contract-paper-final {
+            background: #f9f9f9;
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .contract-title-final {
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .problem-area-final {
+            background: #FFF3CD;
+            border: 2px dashed var(--warning);
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .problem-area-final.fixed {
+            background: #D4EDDA;
+            border: 2px solid var(--success);
+        }
+        
+        .answers-final {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .answer-option-final {
+            padding: 10px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .answer-option-final:hover {
+            border-color: var(--primary);
+        }
+        
+        .answer-option-final.selected {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .option-marker-final {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #757575;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .answer-option-final.selected .option-marker-final {
+            background: var(--success);
+        }
+        
+        /* 控制按钮 */
+        .final-controls {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        .btn-final {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary-final {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        
+        .btn-primary-final:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary-final {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-secondary-final:hover {
+            background: #e0e0e0;
+        }
+        
+        /* 结果区域 */
+        .final-result {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: none;
+        }
+        
+        .final-result.show {
+            display: block;
+        }
+        
+        .result-title-final {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .certificate-final {
+            background: linear-gradient(135deg, #FFD700, #FFC107);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin: 25px 0;
+        }
+        
+        /* 页脚 */
+        .final-footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="final-container">
+        <!-- 头部 -->
+        <div class="final-header">
+            <h1><i class="fas fa-trophy"></i> 税务大师 - 住房租金扣除（完整通关版）</h1>
+            <p>包含优化后的模块二（合同审查实践），所有模块集成在一个通关流程中</p>
+            <div class="integration-badge">
+                <i class="fas fa-link"></i> 模块二已集成 | 完整通关流程
+            </div>
+        </div>
+        
+        <!-- 模块导航 -->
+        <div class="final-modules">
+            <div class="final-module active" id="finalModule1" onclick="switchFinalModule(1)">
+                <div class="module-number">1</div>
+                <div class="module-icon">
+                    <i class="fas fa-city"></i>
+                </div>
+                <h3>城市等级认知</h3>
+                <div class="module-status status-active" id="finalStatus1">进行中</div>
+            </div>
+            
+            <div class="final-module locked" id="finalModule2" onclick="switchFinalModule(2)">
+                <div class="module-number">2</div>
+                <div class="module-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>合同审查实践</h3>
+                <div class="module-status status-locked" id="finalStatus2">锁定中</div>
+            </div>
+            
+            <div class="final-module locked" id="finalModule3" onclick="switchFinalModule(3)">
+                <div class="module-number">3</div>
+                <div class="module-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>扣除计算实战</h3>
+                <div class="module-status status-locked" id="finalStatus3">锁定中</div>
+            </div>
+            
+            <div class="final-module locked" id="finalModule4" onclick="switchFinalModule(4)">
+                <div class="module-number">4</div>
+                <div class="module-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>申报材料准备</h3>
+                <div class="module-status status-locked" id="finalStatus4">锁定中</div>
+            </div>
+        </div>
+        
+        <!-- 游戏区域 -->
+        <div class="final-game-area">
+            <!-- 欢迎界面 -->
+            <div class="welcome-final" id="welcomeFinal">
+                <h2><i class="fas fa-home"></i> 住房租金扣除学习平台</h2>
+                <p>按顺序完成4个学习模块，掌握住房租金扣除的全部知识：</p>
+                
+                <div style="max-width: 500px; margin: 20px auto; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">1</div>
+                        <span><strong>城市等级认知</strong>：8个城市分类（1500/1100/800元）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">2</div>
+                        <span><strong>合同审查实践</strong>：5个合同问题点修复（优化版）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</div>
+                        <span><strong>扣除计算实战</strong>：4个真实场景计算</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 24px; height: 24px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">4</div>
+                        <span><strong>申报材料准备</strong>：60秒倒计时收集材料</span>
+                    </div>
+                </div>
+                
+                <button class="start-final" onclick="startFinalGame()">
+                    <i class="fas fa-play"></i> 开始通关学习
+                </button>
+            </div>
+            
+            <!-- 模块一内容 -->
+            <div class="final-game-content" id="finalModule1Content">
+                <div class="game-title-final">
+                    <i class="fas fa-city"></i> 模块一：城市等级认知
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">将8个城市拖拽到正确的扣除标准区域。完成后点击"完成本模块"继续。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">城市分类游戏</h4>
+                    <p>8个城市：北京、厦门、杭州、苏州、温州、佛山、伊春、七台河</p>
+                    <p>扣除标准：1500元/月、1100元/月、800元/月</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-final btn-primary-final" onclick="simulateModule1Complete()">
+                            <i class="fas fa-check-circle"></i> 模拟完成模块一
+                        </button>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">（在实际版本中，这里会有完整的拖拽游戏）</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模块二内容 -->
+            <div class="final-game-content" id="finalModule2Content">
+                <div class="game-title-final">
+                    <i class="fas fa-file-contract"></i> 模块二：合同审查实践（优化版）
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">审查租赁合同，为每个问题选择正确的修复方案。全部正确后完成本模块。</p>
+                
+                <div class="contract-game-final">
+                    <!-- 合同区域 -->
+                    <div class="contract-paper-final">
+                        <div class="contract-title-final">房屋租赁合同</div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 5px;">出租人信息</h4>
+                            <p>出租人：<span class="problem-area-final" data-problem="1" onclick="highlightProblemFinal(1)">张先生</span></p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 5px;">房屋信息</h4>
+                            <p>房屋坐落：<span class="problem-area-final" data-problem="2" onclick="highlightProblemFinal(2)">杭州市西湖区文三路</span></p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 5px;">租金及支付</h4>
+                            <p>月租金：<span class="problem-area-final" data-problem="3" onclick="highlightProblemFinal(3)">2000元</span></p>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 5px;">其他约定</h4>
+                            <p>租赁合同<span class="problem-area-final" data-problem="4" onclick="highlightProblemFinal(4)">已签订</span>。</p>
+                            <p>房屋<span class="problem-area-final" data-problem="5" onclick="highlightProblemFinal(5)">产权清晰</span>。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 答案选项区域 -->
+                    <div class="answers-final">
+                        <h4 style="color: var(--primary); margin-bottom: 15px;">请选择正确的修复方案：</h4>
+                        
+                        <!-- 问题1 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-weight: bold; color: var(--dark); margin-bottom: 8px;">问题1：出租人信息不完整</div>
+                            <div class="answer-option-final" data-problem="1" data-answer="A" onclick="selectAnswerFinal(1, 'A', this)">
+                                <div class="option-marker-final">A</div>
+                                <div>张先生 (身份证: 330102198501012345)</div>
+                            </div>
+                            <div class="answer-option-final" data-problem="1" data-answer="B" onclick="selectAnswerFinal(1, 'B', this)">
+                                <div class="option-marker-final">B</div>
+                                <div>张先生 (联系电话: 13800138000)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 问题2 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-weight: bold; color: var(--dark); margin-bottom: 8px;">问题2：地址不完整</div>
+                            <div class="answer-option-final" data-problem="2" data-answer="A" onclick="selectAnswerFinal(2, 'A', this)">
+                                <div class="option-marker-final">A</div>
+                                <div>杭州市西湖区</div>
+                            </div>
+                            <div class="answer-option-final" data-problem="2" data-answer="B" onclick="selectAnswerFinal(2, 'B', this)">
+                                <div class="option-marker-final">B</div>
+                                <div>杭州市西湖区文三路123号西湖花园3栋2单元501室</div>
+                            </div>
+                        </div>
+                        
+                        <!-- 问题3 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-weight: bold; color: var(--dark); margin-bottom: 8px;">问题3：租金金额格式不规范</div>
+                            <div class="answer-option-final" data-problem="3" data-answer="A" onclick="selectAnswerFinal(3, 'A', this)">
+                                <div class="option-marker-final">A</div>
+                                <div>人民币贰仟元整（¥2000）</div>
+                            </div>
+                            <div class="answer-option-final" data-problem="3" data-answer="B" onclick="selectAnswerFinal(3, 'B', this)">
+                                <div class="option-marker-final">B</div>
+                                <div>2000元人民币</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="final-controls">
+                    <button class="btn-final btn-primary-final" onclick="checkContractFinal()">
+                        <i class="fas fa-check-circle"></i> 检查答案
+                    </button>
+                    <button class="btn-final btn-secondary-final" onclick="resetContractFinal()">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                    <button class="btn-final btn-primary-final" onclick="completeModuleFinal(2)" id="completeModule2Final" disabled>
+                        <i class="fas fa-arrow-right"></i> 完成本模块
+                    </button>
+                </div>
+                
+                <div id="contractResultFinal" style="margin-top: 20px; text-align: center;"></div>
+            </div>
+            
+            <!-- 模块三内容 -->
+            <div class="final-game-content" id="finalModule3Content">
+                <div class="game-title-final">
+                    <i class="fas fa-calculator"></i> 模块三：扣除计算实战
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">基于真实场景计算住房租金扣除金额。完成后点击"完成本模块"继续。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">扣除计算游戏</h4>
+                    <p>4个计算场景：单身租房、夫妻同城、夫妻异地、合租分摊</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-final btn-primary-final" onclick="simulateModule3Complete()">
+                            <i class="fas fa-check-circle"></i> 模拟完成模块三
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 模块四内容 -->
+            <div class="final-game-content" id="finalModule4Content">
+                <div class="game-title-final">
+                    <i class="fas fa-folder-open"></i> 模块四：申报材料准备
+                </div>
+                <p style="color: #666; margin-bottom: 20px;">在限定时间内收集个人所得税申报材料。完成后即可通关。</p>
+                
+                <div style="background: var(--light); border-radius: var(--radius); padding: 20px; text-align: center;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">材料准备游戏</h4>
+                    <p>60秒倒计时，收集8种申报材料</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn-final btn-primary-final" onclick="completeModuleFinal(4)">
+                            <i class="fas fa-flag-checkered"></i> 完成最终模块
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 结果区域 -->
+            <div class="final-result" id="finalResult">
+                <div class="result-title-final">
+                    <i class="fas fa-trophy"></i> 恭喜通关！
+                </div>
+                
+                <div class="certificate-final">
+                    <h3 style="color: #795548;">住房租金扣除学习证书</h3>
+                    <p style="font-size: 18px; margin: 10px 0;">授予：<strong>税务大师学员</strong></p>
+                    <p>已完成全部4个学习模块，掌握住房租金扣除核心知识</p>
+                    <p style="margin-top: 15px; font-size: 14px;">通关时间：<span id="completionTime">2026-03-27</span></p>
+                </div>
+                
+                <div style="margin: 25px 0;">
+                    <h4 style="color: var(--primary); margin-bottom: 15px;">学习成果总结</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">4</div>
+                            <div style="font-size: 14px; color: #666;">完成模块</div>
+                        </div>
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">100%</div>
+                            <div style="font-size: 14px; color: #666;">通关进度</div>
+                        </div>
+                        <div style="background: var(--light); border-radius: 8px; padding: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: var(--primary);">A+</div>
+                            <div style="font-size: 14px; color: #666;">学习评级</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="final-controls">
+                    <button class="btn-final btn-primary-final" onclick="playAgainFinal()">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="final-footer">
+            <p>© 2026 税务大师 | 完整通关版本 | 模块二已集成优化</p>
+            <p style="margin-top: 10px; font-size: 12px; color: #999;">
+                <i class="fas fa-info-circle"></i> 包含优化后的合同审查实践模块
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        const finalGameState = {
+            currentModule: 1,
+            completedModules: [],
+            moduleScores: {1: 0, 2: 0, 3: 0, 4: 0},
+            totalScore: 0,
+            contractAnswers: {1: null, 2: null, 3: null, 4: null, 5: null},
+            correctContractAnswers: {
+                1: 'A', 2: 'B', 3: 'A', 4: 'B', 5: 'B'
+            }
+        };
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('完整集成版游戏已加载');
+            updateProgress();
+        });
+        
+        // 开始游戏
+        function startFinalGame() {
+            document.getElementById('welcomeFinal').style.display = 'none';
+            document.getElementById('finalModule1Content').classList.add('active');
+            updateProgress();
+        }
+        
+        // 切换模块
+        function switchFinalModule(moduleNumber) {
+            // 检查是否解锁
+            if (moduleNumber > 1 && !finalGameState.completedModules.includes(moduleNumber - 1)) {
+                showFeedbackFinal('请先完成前一个模块', 'error');
+                return;
+            }
+            
+            // 更新当前模块
+            finalGameState.currentModule = moduleNumber;
+            
+            // 隐藏所有内容
+            document.querySelectorAll('.final-game-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 显示当前模块内容
+            document.getElementById(`finalModule${moduleNumber}Content`).classList.add('active');
+            
+            // 更新模块导航
+            document.querySelectorAll('.final-module').forEach((module, index) => {
+                const moduleNum = index + 1;
+                module.classList.remove('active');
+                
+                if (finalGameState.completedModules.includes(moduleNum)) {
+                    module.classList.add('completed');
+                    module.classList.remove('locked');
+                    document.getElementById(`finalStatus${moduleNum}`).textContent = '已完成';
+                    document.getElementById(`finalStatus${moduleNum}`).className = 'module-status status-completed';
+                } else if (moduleNum === moduleNumber) {
+                    module.classList.add('active');
+                    module.classList.remove('locked');
+                    document.getElementById(`finalStatus${moduleNum}`).textContent = '进行中';
+                    document.getElementById(`finalStatus${moduleNum}`).className = 'module-status status-active';
+                } else if (moduleNum <= finalGameState.currentModule) {
+                    module.classList.remove('locked');
+                    document.getElementById(`finalStatus${moduleNum}`).textContent = '待完成';
+                    document.getElementById(`finalStatus${moduleNum}`).className = 'module-status status-active';
+                }
+            });
+            
+            updateProgress();
+        }
+        
+        // 模拟完成模块一
+        function simulateModule1Complete() {
+            finalGameState.moduleScores[1] = 100;
+            completeModuleFinal(1);
+        }
+        
+        // 模拟完成模块三
+        function simulateModule3Complete() {
+            finalGameState.moduleScores[3] = 100;
+            completeModuleFinal(3);
+        }
+        
+        // 合同审查相关函数
+        function highlightProblemFinal(problemId) {
+            const problemCard = document.querySelector(`[data-problem="${problemId}"]`);
+            if (problemCard) {
+                problemCard.style.animation = 'none';
+                setTimeout(() => {
+                    problemCard.style.animation = 'pulse 0.5s';
+                }, 10);
+            }
+        }
+        
+        function selectAnswerFinal(problemId, answer, element) {
+            // 移除同一问题的其他选项的选中状态
+            document.querySelectorAll(`[data-problem="${problemId}"]`).forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // 添加选中状态
+            element.classList.add('selected');
+            
+            // 保存答案
+            finalGameState.contractAnswers[problemId] = answer;
+            
+            // 更新问题区域
+            const problemArea = document.querySelector(`.problem-area-final[data-problem="${problemId}"]`);
+            if (problemArea) {
+                problemArea.classList.add('fixed');
+            }
+            
+            // 检查是否可以完成模块
+            checkIfCanCompleteModule2();
+        }
+        
+        function checkContractFinal() {
+            let correctCount = 0;
+            let totalChecked = 0;
+            
+            // 检查每个问题
+            for (let i = 1; i <= 3; i++) {
+                const userAnswer = finalGameState.contractAnswers[i];
+                const correctAnswer = finalGameState.correctContractAnswers[i];
+                
+                if (userAnswer) {
+                    totalChecked++;
+                    
+                    if (userAnswer === correctAnswer) {
+                        correctCount++;
+                    }
+                }
+            }
+            
+            // 显示结果
+            const resultElement = document.getElementById('contractResultFinal');
+            if (totalChecked === 0) {
+                resultElement.innerHTML = '<div style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> 请先选择答案</div>';
+            } else if (correctCount === 3) {
+                resultElement.innerHTML = '<div style="color: var(--success);"><i class="fas fa-check-circle"></i> 完美！全部3个问题都正确！</div>';
+                document.getElementById('completeModule2Final').disabled = false;
+            } else {
+                resultElement.innerHTML = `<div style="color: var(--danger);"><i class="fas fa-times-circle"></i> 正确${correctCount}个，错误${3 - correctCount}个</div>`;
+            }
+            
+            // 计算得分
+            finalGameState.moduleScores[2] = Math.round((correctCount / 3) * 100);
+            updateProgress();
+            
+            return correctCount === 3;
+        }
+        
+        function checkIfCanCompleteModule2() {
+            const allAnswered = [1, 2, 3].every(i => finalGameState.contractAnswers[i] !== null);
+            
+            if (allAnswered) {
+                checkContractFinal();
+            }
+        }
+        
+        function resetContractFinal() {
+            // 重置答案
+            finalGameState.contractAnswers = {1: null, 2: null, 3: null, 4: null, 5: null};
+            
+            // 重置UI
+            document.querySelectorAll('.answer-option-final').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            document.querySelectorAll('.problem-area-final').forEach(area => {
+                area.classList.remove('fixed');
+            });
+            
+            document.getElementById('completeModule2Final').disabled = true;
+            document.getElementById('contractResultFinal').innerHTML = '';
+            
+            showFeedbackFinal('合同游戏已重置', 'info');
+        }
+        
+        // 完成模块
+        function completeModuleFinal(moduleNumber) {
+            if (!finalGameState.completedModules.includes(moduleNumber)) {
+                finalGameState.completedModules.push(moduleNumber);
+                
+                // 更新总得分
+                finalGameState.totalScore += finalGameState.moduleScores[moduleNumber] || 100;
+                
+                // 显示反馈
+                showFeedbackFinal(`✅ 模块${moduleNumber}完成！`, 'success');
+                
+                // 更新进度
+                updateProgress();
+                
+                // 如果完成了所有模块
+                if (finalGameState.completedModules.length === 4) {
+                    showFinalResult();
+                } else {
+                    // 解锁下一个模块
+                    const nextModule = moduleNumber + 1;
+                    if (nextModule <= 4) {
+                        setTimeout(() => {
+                            switchFinalModule(nextModule);
+                        }, 1000);
+                    }
+                }
+            }
+        }
+        
+        // 显示最终结果
+        function showFinalResult() {
+            // 隐藏所有内容
+            document.querySelectorAll('.final-game-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 显示结果
+            document.getElementById('finalResult').classList.add('show');
+            
+            // 设置完成时间
+            const now = new Date();
+            document.getElementById('completionTime').textContent = 
+                `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // 更新所有模块状态为已完成
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`finalModule${i}`).classList.add('completed');
+                document.getElementById(`finalStatus${i}`).textContent = '已完成';
+                document.getElementById(`finalStatus${i}`).className = 'module-status status-completed';
+            }
+        }
+        
+        // 重新开始
+        function playAgainFinal() {
+            // 重置状态
+            finalGameState.currentModule = 1;
+            finalGameState.completedModules = [];
+            finalGameState.moduleScores = {1: 0, 2: 0, 3: 0, 4: 0};
+            finalGameState.totalScore = 0;
+            finalGameState.contractAnswers = {1: null, 2: null, 3: null, 4: null, 5: null};
+            
+            // 重置UI
+            document.getElementById('finalResult').classList.remove('show');
+            document.getElementById('welcomeFinal').style.display = 'block';
+            
+            document.querySelectorAll('.final-module').forEach((module, index) => {
+                module.classList.remove('active', 'completed');
+                if (index === 0) {
+                    module.classList.add('active');
+                    document.getElementById(`finalStatus${index+1}`).textContent = '进行中';
+                    document.getElementById(`finalStatus${index+1}`).className = 'module-status status-active';
+                } else {
+                    module.classList.add('locked');
+                    document.getElementById(`finalStatus${index+1}`).textContent = '锁定中';
+                    document.getElementById(`finalStatus${index+1}`).className = 'module-status status-locked';
+                }
+            });
+            
+            resetContractFinal();
+            updateProgress();
+            
+            showFeedbackFinal('游戏已重置，重新开始！', 'info');
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            const completedCount = finalGameState.completedModules.length;
+            const progressPercent = Math.round((completedCount / 4) * 100);
+            
+            // 更新进度条
+            document.getElementById('progressPercent').textContent = `${progressPercent}%`;
+            
+            // 更新统计
+            document.getElementById('totalScore').textContent = finalGameState.totalScore;
+            document.getElementById('completedModules').textContent = `${completedCount}/4`;
+            document.getElementById('currentModule').textContent = finalGameState.currentModule;
+        }
+        
+        // 显示反馈
+        function showFeedbackFinal(message, type) {
+            // 创建反馈元素
+            const feedback = document.createElement('div');
+            feedback.textContent = message;
+            feedback.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
+                color: white;
+                border-radius: 8px;
+                z-index: 1000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => feedback.remove(), 300);
+            }, 3000);
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

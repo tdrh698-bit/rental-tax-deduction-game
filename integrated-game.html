@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 住房租金扣除（完整集成版）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1E5AA8;
+            --primary-light: #2D7DD2;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --light: #F5F7FA;
+            --dark: #333333;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .integrated-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .integrated-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .integrated-header:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--success), var(--warning));
+        }
+        
+        .integrated-header h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .integrated-header p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        /* 进度系统 */
+        .progress-system {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .progress-info {
+            flex: 1;
+        }
+        
+        .progress-bar-container {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 5px;
+            transition: var(--transition);
+            width: 0%;
+        }
+        
+        .progress-stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* 模块导航 */
+        .module-navigation {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .module-tab {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-align: center;
+            position: relative;
+        }
+        
+        .module-tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .module-tab.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #e8f4fd 0%, white 100%);
+        }
+        
+        .module-tab.completed {
+            border-color: var(--success);
+        }
+        
+        .module-tab.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .module-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .module-icon.city { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .module-icon.contract { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .module-icon.calculator { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        .module-icon.materials { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
+        
+        .module-tab h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .module-status {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .status-ready { background: #e3f2fd; color: var(--primary); }
+        .status-completed { background: #e8f5e9; color: var(--success); }
+        .status-locked { background: #f5f5f5; color: #999; }
+        
+        /* 游戏区域 */
+        .integrated-game-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .welcome-icon {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .welcome-screen h2 {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .start-button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .start-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 90, 168, 0.3);
+        }
+        
+        /* 游戏内容 */
+        .game-content {
+            display: none;
+        }
+        
+        .game-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .game-title {
+            color: var(--primary);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        /* 模块一：城市等级认知 */
+        .city-game {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .city-game {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .city-list {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        
+        .city-list h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .city-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #e0e0e0;
+            cursor: move;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .city-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .city-name {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .city-type {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .drop-zones {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 3px dashed #bdbdbd;
+            min-height: 150px;
+            transition: var(--transition);
+        }
+        
+        .drop-zone.active {
+            border-color: var(--primary);
+            background: #E3F2FD;
+        }
+        
+        .zone-title {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .deduction-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--success);
+            margin-bottom: 5px;
+        }
+        
+        .zone-content {
+            min-height: 80px;
+            margin-top: 15px;
+        }
+        
+        .dropped-city {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 2px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dropped-city.correct {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .dropped-city.incorrect {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+        
+        /* 模块二：合同审查实践 */
+        .contract-game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .contract-game-area {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .contract-paper {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .contract-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+        
+        .contract-section {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: var(--light);
+            border-radius: 8px;
+        }
+        
+        .contract-section h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .problem-area {
+            background: #FFF3CD;
+            border: 2px dashed var(--warning);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .problem-area:hover {
+            background: #FFEAA7;
+        }
+        
+        .problem-area.fixed {
+            background: #D4EDDA;
+            border: 2px solid var(--success);
+            color: #155724;
+        }
+        
+        .answers-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .answers-title {
+            color: var(--primary);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .problem-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .problem-card.fixed {
+            border-left-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .problem-question {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .answer-options {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .answer-option {
+            padding: 10px 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+        
+        .answer-option:hover {
+            border-color: var(--primary);
+            background: #E3F2FD;
+        }
+        
+        .answer-option.selected {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .answer-option.correct {
+            border-color: var(--success);
+            background: #E8F5E9;
+        }
+        
+        .answer-option.incorrect {
+            border-color: var(--danger);
+            background: #FFEBEE;
+        }
+        
+        .option-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            background: #757575;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .answer-option.selected .option-marker {
+            background: var(--success);
+        }
+        
+        /* 模块三：扣除计算实战 */
+        .calculation-game {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .calculator {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 25px;
+        }
+        
+        .calc-row {
+            margin-bottom: 20px;
+        }
+        
+        .calc-row label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        select, input[type="number"], input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* 模块四：申报材料准备 */
+        .materials-game {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timer-panel {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .material-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 3px solid transparent;
+        }
+        
+        .material-card.required {
+            border-color: var(--primary);
+        }
+        
+        .material-card.optional {
+            border-color: #bdbdbd;
+        }
+        
+        .material-card.collected {
+            background: var(--success);
+            color: white;
+        }
+        
+        .material-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+        
+        /* 结果区域 */
+        .result-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            display: none;
+        }
+        
+        .result-area.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .result-title {
+            color: var(--primary);
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .final-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .final-stat {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        
+        .final-stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .final-stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .certificate {
+            background: linear-gradient(135deg, #FFD700, #FFC107);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .certificate h3 {
+            color: #795548;
+            margin-bottom: 10px;
+        }
+        
+        /* 反馈消息 */
+        .feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.success {
+            background: var(--success);
+        }
+        
+        .feedback.error {
+            background: var(--danger);
+        }
+        
+        .feedback.info {
+            background: var(--primary);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* 页脚 */
+        .integrated-footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .integrated-header h1 {
+                font-size: 24px;
+            }
+            
+            .progress-system {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .module-navigation {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="integrated-container">
+        <!-- 头部 -->
+        <div class="integrated-header">
+            <h1><i class="fas fa-home"></i> 税务大师 - 住房租金扣除（完整集成版）</h1>
+            <p>包含优化后的模块二（合同审查实践），所有模块集成在一个通关流程中</p>
+        </div>
+        
+        <!-- 进度系统 -->
+        <div class="progress-system">
+            <div class="progress-info">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="color: var(--primary); font-weight: bold;">通关进度</span>
+                    <span id="progressPercent" style="color: var(--primary); font-weight: bold;">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+            
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalScore">0</div>
+                    <div class="stat-label">总得分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="completedModules">0/4</div>
+                    <div class="stat-label">完成模块</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="currentModule">1</div>
+                    <div class="stat-label">当前模块</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模块导航 -->
+        <div class="module-navigation">
+            <div class="module-tab active" id="moduleTab1" onclick="switchModule(1)">
+                <div class="module-icon city">
+                    <i class="fas fa-city"></i>
+                </div>
+                <h3>模块一：城市等级认知</h3>
+                <div class="module-status status-ready" id="moduleStatus1">进行中</div>
+            </div>
+            
+            <div class="module-tab locked" id="moduleTab2" onclick="switchModule(2)">
+                <div class="module-icon contract">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>模块二：合同审查实践</h3>
+                <div class="module-status status-locked" id="moduleStatus2">锁定中</div>
+            </div>
+            
+            <div class="module-tab locked" id="moduleTab3" onclick="switchModule(3)">
+                <div class="module-icon calculator">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>模块三：扣除计算实战</h3>
+                <div class="module-status status-locked" id="moduleStatus3">锁定中</div>
+            </div>
+            
+            <div class="module-tab locked" id="moduleTab4" onclick="switchModule(4)">
+                <div class="module-icon materials">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>模块四：申报材料准备</h3>
+                <div class="module-status status-locked" id="moduleStatus4">锁定中</div>
+            </div>
+        </div>
+        
+        <!-- 游戏区域 -->
+        <div class="integrated-game-area">
+            <!-- 欢迎屏幕 -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2>欢迎来到住房租金扣除学习平台</h2>
+                <p>本平台包含4个学习模块，按顺序完成所有模块即可通关：</p>
+                
+                <div style="max-width: 600px; margin: 20px auto; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div class="module-icon city" style="width: 30px; height: 30px; font-size: 14px;">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <span><strong>模块一</strong>：城市等级认知（8个城市分类）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div class="module-icon contract" style="width: 30px; height: 30px; font-size: 14px;">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <span><strong>模块二</strong>：合同审查实践（5个问题点修复）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div class="module-icon calculator" style="width: 30px; height: 30px; font-size: 14px;">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <span><strong>模块三</strong>：扣除计算实战（4个场景计算）</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="module-icon materials" style="width: 30px; height: 30px; font-size: 14px;">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <span><strong>模块四</strong>：申报材料准备（倒计时收集）</span>
+                    </div>
+                </div>
+                
+                <button class="start-button" onclick="startGame()">
+                    <i class="fas fa-play"></i> 开始学习之旅
+                </button>
+            </div>
+            
+            <!-- 模块一：城市等级认知 -->
+            <div class="game-content" id="module1Content">
+                <div class="game-header">
+                    <div class="game-title">
+                        <i class="fas fa-city"></i>
+                        模块一：城市等级认知
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn btn-primary" onclick="checkCityAnswers()">
+                            <i class="fas fa-check-circle"></i> 检查答案
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetCityGame()">
+                            <i class="fas fa-redo"></i> 重新开始
+                        </button>
+                        <button class="btn btn-primary" onclick="completeModule(1)" id="completeModule1" disabled>
+                            <i class="fas fa-arrow-right"></i> 完成本模块
+                        </button>
+                    </div>
+                </div>
+                
+                <p style="color: #666; margin-bottom: 20px;">根据住房租金专项附加扣除政策，将城市拖拽到正确的扣除标准区域。</p>
+                
+                <div class="city-game">
+                    <div class="city-list">
+                        <h4><i class="fas fa-city"></i> 待分类城市</h4>
+                        <div id="citiesContainer"></div>
+                    </div>
+                    
+                    <div class="drop-zones">
+                        <div class="drop-zone" data-zone="1500" ondrop="dropCity(event)" ondragover="allowDrop(event)">
+                            <div class="zone-title">1500元/月</div>
+                            <div class="deduction-amount">¥1500</div>
+                            <div class="zone-description">直辖市、省会城市、计划单列市</div>
+                            <div id="zone1500" class="zone-content"></div>
+                        </div>
+                        
+                        <div class="drop-zone" data-zone="1100" ondrop="dropCity(event)" ondragover="allowDrop(event)">
+                            <div class="zone-title">1100元/月</div>
+                            <div class="deduction-amount">¥1100</div>
+                            <div class="zone-description">市辖区户籍人口超过100万</div>
+                            <div id="zone1100" class="zone-content"></div>
+                        </div>
+                        
+                        <div class="drop-zone" data-zone="800" ondrop="dropCity(event)" ondragover="allowDrop(event)">
+                            <div class="zone-title">800元/月</div>
+                            <div class="deduction-amount">¥800</div>
+                            <div class="zone-description">市辖区户籍人口不超过100万</div>
+                            <div id="zone800" class="zone-content"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="cityResult" style="margin-top: 20px;"></div>
+            </div>
+            
+            <!-- 模块二：合同审查实践 -->
+            <div class="game-content" id="module2Content">
+                <div class="game-header">
+                    <div class="game-title">
+                        <i class="fas fa-file-contract"></i>
+                        模块二：合同审查实践（优化版）
+                    </div>
+                    <div class="game-controls">
+                        <button class="btn btn-primary" onclick="checkContractAnswers()">
+                            <i class="fas fa-check-circle"></i> 检查答案
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetContractGame()">
+                            <i class="fas fa-redo"></i> 重新开始
+                        </button>
+                        <button class="btn btn-primary" onclick="completeModule(2)" id="completeModule2" disabled>
+                            <i class="fas fa-arrow-right"></i> 完成本模块
+                        </button>
+                    </div>
+                </div>
+                
+                <p style="color: #666; margin-bottom: 20px;">审查下面的租赁合同，为每个问题选择正确的修复方案。全部正确后即可完成本模块。</p>
+                
+                <div class="contract-game-area">
+                    <!-- 合同区域 -->
+                    <div class="contract-paper">
+                        <div class="contract-title">房屋租赁合同</div>
+                        
+                        <div class="contract-section">
+                            <h4>第一条 出租人信息</h4>
+                            <p>出租人：<span class="problem-area" data-problem="1">张先生</span></p>
+                            <p>联系电话：13800138000</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第二条 房屋信息</h4>
+                            <p>房屋坐落：<span class="problem-area" data-problem="2">杭州市西湖区文三路</span></p>
+                            <p>房屋面积：85平方米</p>
+                            <p>房屋用途：居住</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第四条 租金及支付</h4>
+                            <p>月租金：<span class="problem-area" data-problem="3">2000元</span></p>
+                            <p>支付方式：银行转账</p>
+                            <p>支付日期：每月5日前</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第五条 其他约定</h4>
+                            <p>租赁合同<span class="problem-area" data-problem="4">已签订</span>。</p>
+                            <p>房屋<span class="problem-area" data-problem="5">产权清晰</span>。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 答案选项区域 -->
+                    <div class="answers-area">
+                        <div class="answers-title">
+                            <i class="fas fa-check-circle"></i> 请为每个问题选择正确的修复方案
+                        </div>
+                        
+                        <!-- 问题1 -->
+                        <div class="problem-card" id="contractProblem1">
+                            <div class="problem-question">
+                                问题1：出租人信息不完整
+                            </div>
+                            <p>当前内容：张先生</p>
+                            
+                            <div class="answer-options">
+                                <div class="answer-option" data-problem="1" data-answer="A">
+                                    <div class="option-marker">A</div>
+                                    <div class="option-text">张先生 (身份证: 330102198501012345)</div>
+                                </div>
+                                <div class="answer-option" data-problem="1" data-answer="B">
+                                    <div class="option-marker">B</div>
+                                    <div class="option-text">张先生 (联系电话: 13800138000)</div>
+                                </div>
+                                <div class="answer-option" data-problem="1" data-answer="C">
+                                    <div class="option-marker">C</div>
+                                    <div class="option-text">张先生 (工作单位: 杭州某公司)</div>
+                                </div>
+                                <div class="answer-option" data-problem="1" data-answer="D">
+                                    <div class="option-marker">D</div>
+                                    <div class="option-text">张先生 (住址: 杭州市西湖区)</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 问题2 -->
+                        <div class="problem-card" id="contractProblem2">
+                            <div class="problem-question">
+                                问题2：地址不完整
+                            </div>
+                            <p>当前内容：杭州市西湖区文三路</p>
+                            
+                            <div class="answer-options">
+                                <div class="answer-option" data-problem="2" data-answer="A">
+                                    <div class="option-marker">A</div>
+                                    <div class="option-text">杭州市西湖区</div>
+                                </div>
+                                <div class="answer-option" data-problem="2" data-answer="B">
+                                    <div class="option-marker">B</div>
+                                    <div class="option-text">杭州市西湖区文三路123号西湖花园3栋2单元501室</div>
+                                </div>
+                                <div class="answer-option" data-problem="2" data-answer="C">
+                                    <div class

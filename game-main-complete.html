@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>税务大师 - 住房租金扣除完整游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-blue: #1E5AA8;
+            --secondary-blue: #2D7DD2;
+            --accent-green: #4CAF50;
+            --warning-red: #F44336;
+            --light-gray: #F5F7FA;
+            --dark-gray: #333333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark-gray);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 头部 */
+        .header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 6px solid var(--primary-blue);
+            border-right: 6px solid var(--primary-blue);
+        }
+        
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: var(--light-gray);
+            padding: 15px 25px;
+            border-radius: 10px;
+            min-width: 120px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* 任务导航 */
+        .mission-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .mission-tab {
+            padding: 15px 25px;
+            background: white;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .mission-tab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mission-tab.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--secondary-blue);
+        }
+        
+        .mission-tab i {
+            font-size: 20px;
+        }
+        
+        /* 游戏内容区域 */
+        .game-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 600px;
+            margin-bottom: 20px;
+        }
+        
+        .mission-panel {
+            display: none;
+        }
+        
+        .mission-panel.active {
+            display: block;
+        }
+        
+        .mission-title {
+            color: var(--primary-blue);
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .mission-description {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        /* 任务一：城市游戏 */
+        .city-game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .city-list-panel {
+            background: var(--light-gray);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+        
+        .city-list-panel h3 {
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .city-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .city-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .city-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .city-info {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .city-type {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: #e3f2fd;
+            color: var(--primary-blue);
+        }
+        
+        .drop-zones-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .drop-zone {
+            background: var(--light-gray);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 3px dashed #ccc;
+            text-align: center;
+            min-height: 200px;
+        }
+        
+        .drop-zone.active {
+            border-color: var(--accent-green);
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .zone-title {
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .zone-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-green);
+            margin: 10px 0;
+        }
+        
+        .zone-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .zone-content {
+            min-height: 120px;
+            margin-top: 15px;
+        }
+        
+        .dropped-city {
+            background: white;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .dropped-city.correct {
+            border-left: 4px solid var(--accent-green);
+        }
+        
+        .dropped-city.incorrect {
+            border-left: 4px solid var(--warning-red);
+        }
+        
+        /* 任务二：合同游戏 */
+        .contract-game-container {
+            margin-top: 20px;
+        }
+        
+        .contract-paper {
+            background: #fff8e1;
+            border: 2px solid #ffd54f;
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            font-family: 'SimSun', serif;
+            line-height: 1.8;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .contract-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .contract-section {
+            margin-bottom: 20px;
+        }
+        
+        .contract-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        .problem-area {
+            background: rgba(244, 67, 54, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 3px solid var(--warning-red);
+        }
+        
+        .problem-area:hover {
+            background: rgba(244, 67, 54, 0.2);
+        }
+        
+        .problem-area i {
+            color: var(--warning-red);
+            margin-right: 8px;
+        }
+        
+        .fix-dialog {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--accent-green);
+        }
+        
+        .fix-dialog h4 {
+            color: var(--accent-green);
+            margin-bottom: 10px;
+        }
+        
+        /* 任务三：计算游戏 */
+        .calculation-game-container {
+            margin-top: 20px;
+        }
+        
+        .scenario-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .scenario-btn {
+            padding: 12px 20px;
+            background: var(--light-gray);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .scenario-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .scenario-content {
+            background: var(--light-gray);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .scenario-title {
+            color: var(--primary-blue);
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .scenario-desc {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .calculator {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .calc-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+        
+        .calc-label {
+            width: 150px;
+            font-weight: 600;
+        }
+        
+        .calc-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .calc-result {
+            background: #e8f4fd;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        /* 任务四：材料游戏 */
+        .materials-game-container {
+            margin-top: 20px;
+        }
+        
+        .timer-panel {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .material-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .material-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .material-card.selected {
+            border-color: var(--accent-green);
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .material-card.required {
+            border-color: var(--primary-blue);
+        }
+        
+        .material-card.not-required {
+            border-color: #ddd;
+            opacity: 0.7;
+        }
+        
+        .material-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+        
+        .material-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .material-desc {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        /* 游戏控制按钮 */
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 90, 168, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        /* 结果区域 */
+        .result-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .result-title {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .success {
+            color: var(--accent-green);
+        }
+        
+        .error {
+            color: var(--warning-red);
+        }
+        
+        .info {
+            color: var(--primary-blue);
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer-links {
+            margin-top: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 状态信息 */
+        .status-info {
+            background: #e8f4fd;
+            border-left: 4px solid var(--primary-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .status-info h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> 税务大师 - 住房租金扣除完整游戏</h1>
+            <p>掌握个人所得税住房租金专项附加扣除知识，通过4个任务关卡成为税务达人</p>
+            
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalScore">0</div>
+                    <div class="stat-label">总得分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="completedMissions">1/4</div>
+                    <div class="stat-label">完成任务</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="gameTime">00:00</div>
+                    <div class="stat-label">游戏时间</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 任务导航 -->
+        <div class="mission-tabs">
+            <div class="mission-tab active" onclick="switchMission(1)">
+                <i class="fas fa-city"></i>
+                <span>任务一：城市分类</span>
+            </div>
+            <div class="mission-tab" onclick="switchMission(2)">
+                <i class="fas fa-file-contract"></i>
+                <span>任务二：合同审查</span>
+            </div>
+            <div class="mission-tab" onclick="switchMission(3)">
+                <i class="fas fa-calculator"></i>
+                <span>任务三：扣除计算</span>
+            </div>
+            <div class="mission-tab" onclick="switchMission(4)">
+                <i class="fas fa-folder-open"></i>
+                <span>任务四：材料准备</span>
+            </div>
+        </div>
+        
+        <!-- 游戏内容区域 -->
+        <div class="game-content">
+            <!-- 任务一：城市分类 -->
+            <div id="mission1" class="mission-panel active">
+                <div class="mission-title">
+                    <i class="fas fa-city"></i>
+                    任务一：城市等级判断
+                </div>
+                <div class="mission-description">
+                    根据住房租金专项附加扣除政策，不同城市的扣除标准不同。请将下面的8个城市拖拽到正确的扣除标准区域。
+                </div>
+                
+                <div class="city-game-container">
+                    <!-- 城市列表 -->
+                    <div class="city-list-panel">
+                        <h3><i class="fas fa-list"></i> 待分类城市</h3>
+                        <div id="cityList">
+                            <!-- 城市将由JavaScript动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 拖放区域 -->
+                    <div class="drop-zones-panel">
+                        <div class="drop-zone" data-zone="1500" id="zone1500">
+                            <div class="zone-title">1500元/月</div>
+                            <div class="zone-amount">1500元</div>
+                            <div class="zone-desc">直辖市、省会城市、计划单列市</div>
+                            <div class="zone-content" id="zone1500Content"></div>
+                        </div>
+                        
+                        <div class="drop-zone" data-zone="1100" id="zone1100">
+                            <div class="zone-title">1100元/月</div>
+                            <div class="zone-amount">1100元</div>
+                            <div class="zone-desc">市辖区户籍人口超过100万</div>
+                            <div class="zone-content" id="zone1100Content"></div>
+                        </div>
+                        
+                        <div class="drop-zone" data-zone="800" id="zone800">
+                            <div class="zone-title">800元/月</div>
+                            <div class="zone-amount">800元</div>
+                            <div class="zone-desc">市辖区户籍人口不超过100万</div>
+                            <div class="zone-content" id="zone800Content"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-controls">
+                    <button class="btn btn-primary" onclick="checkCityAnswers()">
+                        <i class="fas fa-check-circle"></i> 检查答案
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetCityGame()">
+                        <i class="fas fa-redo"></i> 重新开始
+                    </button>
+                </div>
+                
+                <div id="cityResultArea" class="result-area">
+                    <div class="result-title"><i class="fas fa-info-circle"></i> 游戏说明</div>
+                    <p>请将城市拖拽到相应的扣除标准区域，然后点击"检查答案"。</p>
+                    <p><strong>扣除标准说明：</strong></p>
+                    <ul>
+                        <li><strong>1500元/月</strong>：直辖市、省会城市、计划单列市</li>
+                        <li><strong>1100元/月</strong>：市辖区户籍人口超过100万的城市</li>
+                        <li><strong>800元/月</strong>：市辖区户籍人口不超过100万的城市</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 任务二：合同审查 -->
+            <div id="mission2" class="mission-panel">
+                <div class="mission-title">
+                    <i class="fas fa-file-contract"></i>
+                    任务二：租赁合同审查
+                </div>
+                <div class="mission-description">
+                    请仔细审查下面的租赁合同，找出其中不符合住房租金扣除要求的5个问题点，并点击问题进行修复。
+                </div>
+                
+                <div class="contract-game-container">
+                    <div class="contract-paper">
+                        <div class="contract-title">房屋租赁合同</div>
+                        
+                        <div class="contract-section">
+                            <h4>第一条 出租人信息</h4>
+                            <p>出租人：<span class="problem-area" data-problem="landlord">张先生</span></p>
+                            <p>联系电话：13800138000</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第二条 房屋信息</h4>
+                            <p>房屋坐落：<span class="problem-area" data-problem="address">杭州市西湖区文三路</span></p>
+                            <p>房屋面积：85平方米</p>
+                            <p>房屋用途：住宅</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第三条 租赁期限</h4>
+                            <p>租赁期自2024年1月1日至2024年12月31日，共计12个月。</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第四条 租金及支付</h4>
+                            <p>月租金：<span class="problem-area" data-problem="rent">2000元</span></p>
+                            <p>支付方式：按月支付，每月1日前支付当月租金。</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第五条 其他约定</h4>
+                            <p>1. 本合同经双方签字盖章后生效。</p>
+                            <p>2. 租赁合同<span class="problem-area" data-problem="record">已签订</span>。</p>
+                            <p>3. 房屋<span class="problem-area" data-problem="property">产权清晰</span>。</p>
+                        </div>
+                        
+                        <div class="contract-section">
+                            <h4>第六条 签字盖章</h4>
+                            <p>出租人（签字）：张先生</p>
+                            <p>承租人（签字）：李女士</p>
+                            <p>签订日期：2023年12月25日</p>
+                        </div>
+                    </div>
+                    
+                    <div id="fixDialog" class="fix-dialog" style="display: none;">
+                        <h4><i class="fas fa-tools"></i> 修复问题</h4>
+                        <p id="problemDescription"></p>
+                        <div style="margin: 15px 0;">
+                            <input type="text" id="fixInput" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                        </div>
+                        <button class="btn btn-success" onclick="applyFix()">
+                            <i class="fas fa-check"></i> 确认修复
+                        </button>
+                        <button class="btn btn-secondary" onclick="cancelFix()" style="margin-left: 10px;">
+                            <i class="fas fa-times"></i> 取消
+                        </button>
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button class="btn btn-primary" onclick="checkContractAnswers()">
+                            <i class="fas fa-check-circle"></i> 检查合同
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetContractGame()">
+                            <i class="fas fa-redo"></i> 重新审查
+                        </button>
+                    </div>
+                    
+                    <div id="contractResultArea" class="result-area">
+                        <div class="result-title"><i class="fas fa-info-circle"></i> 合同审查说明</div>
+                        <p>点击合同中的<span style="color: var(--warning-red);">红色高亮</span>区域，修复不符合住房租金扣除要求的问题。</p>
+                        <p><strong>常见问题：</strong></p>
+                        <ul>
+                            <li>出租人信息不完整（缺少身份证号）</li>
+                            <li>地址不完整（缺少详细门牌号）</li>
+                            <li>租金金额应同时注明大小写</li>
+                            <li>缺失租赁合同备案编号</li>
+                            <li>缺失房屋所有权证号</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 任务三：扣除计算 -->
+            <div id="mission3" class="mission-panel">
+                <div class="mission-title">
+                    <i class="fas fa-calculator"></i>
+                    任务三：扣除计算实战
+                </div>
+                <div class="mission-description">
+                    根据不同的家庭情况和城市标准，计算实际可以扣除的租金金额。请选择场景并填写相关信息。
+                </div>
+                
+                <div class="calculation-game-container">
+                    <div class="scenario-selector">
+                        <button class="scenario-btn active" onclick="selectScenario(1)">场景一：单身租房族</button>
+                        <button class="scenario-btn" onclick="selectScenario(2)">场景二：已婚夫妻同城</button>
+                        <button class="scenario-btn" onclick="selectScenario(3)">场景三：已婚夫妻异地</button>
+                        <button class="scenario-btn" onclick="selectScenario(4)">场景四：合租分摊</button>
+                    </div>
+                    
+                    <div class="scenario-content">
+                        <div class="scenario-title" id="scenarioTitle">场景一：单身租房族</div>
+                        <div class="scenario-desc" id="scenarioDesc">你在杭州市工作，月租金2000元，租赁期限全年</div>
+                        
+                        <div class="calculator">
+                            <div class="calc-row">
+                                <div class="calc-label">所在城市：</div>
+                                <select class="calc-input" id="citySelect">
+                                    <option value="1500">北京市 (1500元/月)</option>
+                                    <option value="1500">厦门市 (1500元/月)</option>
+                                    <option value="1500" selected>杭州市 (1500元/月)</option>
+                                    <option value="1100">苏州市 (1100元/月)</option>
+                                    <option value="1100">温州市 (1100元/月)</option>
+                                    <option value="1100">佛山市 (1100元/月)</option>
+                                    <option value="800">伊春市 (800元/月)</option>
+                                    <option value="800">七台河市 (800元/月)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="calc-row">
+                                <div class="calc-label">月租金：</div>
+                                <input type="range" class="calc-input" id="rentSlider" min="500" max="5000" step="100" value="2000">
+                                <span id="rentValue">2000元</span>
+                            </div>
+                            
+                            <div class="calc-row">
+                                <div class="calc-label">租赁月份：</div>
+                                <input type="number" class="calc-input" id="monthsInput" min="1" max="12" value="12">
+                                <span>个月</span>
+                            </div>
+                            
+                            <div class="calc-row">
+                                <div class="calc-label">家庭状况：</div>
+                                <div>
+                                    <label><input type="radio" name="family" value="single" checked> 单身</label>
+                                    <label style="margin-left: 15px;"><input type="radio" name="family" value="married"> 已婚</label>
+                                </div>
+                            </div>
+                            
+                            <div class="calc-row" id="spouseOptions" style="display: none;">
+                                <div class="calc-label">配偶情况：</div>
+                                <div>
+                                    <label><input type="checkbox" id="spouseHasHouse"> 配偶有自有住房</label>
+                                    <label style="margin-left: 15px;"><input type="checkbox" id="spouseSameCity"> 配偶在同一城市工作</label>
+                                </div>
+                            </div>
+                            
+                            <div class="calc-row">
+                                <div class="calc-label">合租人数：</div>
+                                <input type="number" class="calc-input" id="roommatesInput" min="1" max="5" value="1">
+                                <span>人</span>
+                            </div>
+                        </div>
+                        
+                        <div class="game-controls" style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="calculateDeduction()">
+                                <i class="fas fa-calculator"></i> 计算扣除额
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetCalculator()">
+                                <i class="fas fa-redo"></i> 重置计算
+                            </button>
+                        </div>
+                        
+                        <div id="calculationResult" class="calc-result" style="display: none;">
+                            <div class="result-title"><i class="fas fa-chart-bar"></i> 计算结果</div>
+                            <p id="resultText"></p>
+                            <p id="explanationText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 任务四：材料准备 -->
+            <div id="mission4" class="mission-panel">
+                <div class="mission-title">
+                    <i class="fas fa-folder-open"></i>
+                    任务四：申报材料准备
+                </div>
+                <div class="mission-description">
+                    在5分钟倒计时内，收集个人所得税申报所需的材料。点击必须的材料卡片，避免点击不需要的材料。
+                </div>
+                
+                <div class="materials-game-container">
+                    <div class="timer-panel">
+                        <h3><i class="fas fa-clock"></i> 倒计时</h3>
+                        <div class="timer-display" id="timerDisplay">05:00</div>
+                        <p>剩余时间收集必须的申报材料</p>
+                    </div>
+                    
+                    <div class="materials-grid" id="materialsGrid">
+                        <!-- 材料卡片将由JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="game-controls">
+                        <button class="btn btn-primary" onclick="startMaterialsGame()">
+                            <i class="fas fa-play"></i> 开始游戏
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetMaterialsGame()">
+                            <i class="fas fa-redo"></i> 重新开始
+                        </button>
+                    </div>
+                    
+                    <div id="materialsResultArea" class="result-area">
+                        <div class="result-title"><i class="fas fa-info-circle"></i> 材料准备说明</div>
+                        <p>点击<span style="color: var(--primary-blue);">蓝色边框</span>的材料卡片（必须材料），避免点击<span style="color: #ddd;">灰色边框</span>的卡片（不需要材料）。</p>
+                        <p><strong>必须材料包括：</strong></p>
+                        <ul>
+                            <li>房屋租赁合同（已备案）</li>
+                            <li>租赁发票或支付凭证</li>
+                            <li>出租方房产证明</li>
+                            <li>租赁合同备案证明</li>
+                            <li>承租人身份证</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>© 2026 税务大师游戏 | 住房租金专项附加扣除学习工具</p>
+            <p class="footer-links">
+                <a href="simple-game.html" target="_blank">简化版</a> |
+                <a href="test-game.html" target="_blank">测试版</a> |
+                <a href="verify-cities.html" target="_blank">数据验证</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 游戏状态
+        let currentMission = 1;
+        let gameScore = 0;
+        let gameTime = 0;
+        let timerInterval = null;
+        
+        // 城市数据
+        const cities = [
+            { name: "北京市", population: "2170万", correctZone: 1500, type: "直辖市" },
+            { name: "厦门市", population: "528万", correctZone: 1500, type: "计划单列市" },
+            { name: "杭州市", population: "1220万", correctZone: 1500, type: "省会城市" },
+            { name: "苏州市", population: "1274万", correctZone: 1100, type: "人口>100万" },
+            { name: "温州市", population: "957万", correctZone: 1100, type: "人口>100万" },
+            { name: "佛山市", population: "950万", correctZone: 1100, type: "人口>100万" },
+            { name: "伊春市", population: "90万", correctZone: 800, type: "人口≤100万" },
+            { name: "七台河市", population: "72万", correctZone: 800, type: "人口≤100万" }
+        ];
+        
+        // 合同游戏状态
+        let currentProblem = null;
+        let fixedProblems = 0;
+        
+        // 计算游戏状态
+        let currentScenario = 1;
+        
+        // 材料游戏状态
+        let materialsGameActive = false;
+        let materialsTimeLeft = 300; // 5分钟 = 300秒
+        let selectedMaterials = [];
+        let requiredMaterials = ['contract', 'invoice', 'property', 'record', 'id'];
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('游戏主页面加载完成');
+            
+            // 初始化任务一
+            initCityGame();
+            
+            // 初始化任务二
+            initContractGame();
+            
+            // 初始化任务三
+            initCalculationGame();
+            
+            // 初始化任务四
+            initMaterialsGame();
+            
+            // 启动游戏计时器
+            startGameTimer();
+            
+            // 更新UI
+            updateGameStats();
+        });
+        
+        // 切换任务
+        function switchMission(missionNumber) {
+            // 更新标签
+            document.querySelectorAll('.mission-tab').forEach((tab, index) => {
+                if (index + 1 === missionNumber) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // 更新内容
+            for (let i = 1; i <= 4; i++) {
+                const panel = document.getElementById(`mission${i}`);
+                if (panel) {
+                    if (i === missionNumber) {
+                        panel.classList.add('active');
+                    } else {
+                        panel.classList.remove('active');
+                    }
+                }
+            }
+            
+            currentMission = missionNumber;
+            console.log(`切换到任务 ${missionNumber}`);
+        }
+        
+        // 启动游戏计时器
+        function startGameTimer() {
+            timerInterval = setInterval(() => {
+                gameTime++;
+                updateGameTime();
+            }, 1000);
+        }
+        
+        // 更新游戏时间显示
+        function updateGameTime() {
+            const minutes = Math.floor(gameTime / 60);
+            const seconds = gameTime % 60;
+            document.getElementById('gameTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // 更新游戏统计
+        function updateGameStats() {
+            // 计算完成任务数
+            let completed = 0;
+            if (document.querySelectorAll('.dropped-city').length === 8) completed++;
+            if (fixedProblems === 5) completed++;
+            // 任务三和任务四的完成判断可以在相应函数中添加
+            
+            document.getElementById('completedMissions').textContent = `${completed}/4`;
+            document.getElementById('totalScore').textContent = gameScore;
+        }
+        
+        // ========== 任务一：城市游戏 ==========
+        function initCityGame() {
+            const cityList = document.getElementById('cityList');
+            cityList.innerHTML = '';
+            
+            // 随机排序城市
+            const shuffledCities = [...cities].sort(() => Math.random() - 0.5);
+            
+            shuffledCities.forEach(city => {
+                const cityItem = document.createElement('div');
+                cityItem.className = 'city-item';
+                cityItem.dataset.city = city.name;
+                cityItem.dataset.zone = city.correctZone;
+                cityItem.dataset.population = city.population;
+                cityItem.dataset.type = city.type;
+                cityItem.setAttribute('draggable', 'true');
+                
+                cityItem.innerHTML = `
+                    <div>
+                        <div class="city-name">${city.name}</div>
+                        <div class="city-info">${city.population} · ${city.type}</div>
+                    </div>
+                    <div class="city-type">${city.type}</div>
+                `;
+                
+                cityList.appendChild(cityItem);
+            });
+            
+            // 初始化拖拽功能
+            initDragAndDrop();
+        }
+        
+        function initDragAndDrop() {
+            const cityItems = document.querySelectorAll('.city-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let draggedCity = null;
+            
+            // 城市项拖拽事件
+            cityItems.forEach(item => {
+                item.addEventListener('dragstart', (e) => {
+                    draggedCity = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.city);
+                    item.style.opacity = '0.5';
+                });
+                
+                item.addEventListener('dragend', () => {
+                    item.style.opacity = '1';
+                    draggedCity = null;
+                });
+            });
+            
+            // 拖放区域事件
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('active');
+                });
+                
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('active');
+                });
+                
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('active');
+                    
+                    if (draggedCity) {
+                        const cityName = draggedCity.dataset.city;
+                        const cityZone = parseInt(draggedCity.dataset.zone);
+                        const targetZone = parseInt(zone.dataset.zone);
+                        const cityPopulation = draggedCity.dataset.population;
+                        const cityType = draggedCity.dataset.type;
+                        
+                        // 从原位置移除
+                        draggedCity.remove();
+                        
+                        // 添加到拖放区域
+                        const droppedCity = document.createElement('div');
+                        droppedCity.className = 'dropped-city';
+                        
+                        // 检查是否正确
+                        const isCorrect = cityZone === targetZone;
+                        if (isCorrect) {
+                            droppedCity.classList.add('correct');
+                        } else {
+                            droppedCity.classList.add('incorrect');
+                        }
+                        
+                        droppedCity.innerHTML = `
+                            <div>
+                                <div style="font-weight: bold;">${cityName}</div>
+                                <div style="font-size: 12px; color: #666;">${cityPopulation} · ${cityType}</div>
+                            </div>
+                            <div style="color: ${isCorrect ? '#4CAF50' : '#F44336'};">
+                                ${isCorrect ? '✓' : '✗'}
+                            </div>
+                        `;
+                        
+                        zone.querySelector('.zone-content').appendChild(droppedCity);
+                        
+                        // 更新游戏统计
+                        updateGameStats();
+                    }
+                });
+            });
+        }
+        
+        function checkCityAnswers() {
+            const zones = [
+                { id: 'zone1500Content', amount: 1500 },
+                { id: 'zone1100Content', amount: 1100 },
+                { id: 'zone800Content', amount: 800 }
+            ];
+            
+            let correctCount = 0;
+            let totalCount = 0;
+            
+            zones.forEach(zone => {
+                const zoneElement = document.getElementById(zone.id);
+                const cities = zoneElement.querySelectorAll('.dropped-city');
+                
+                cities.forEach(city => {
+                    totalCount++;
+                    if (city.classList.contains('correct')) {
+                        correctCount++;
+                    }
+                });
+            });
+            
+            const totalCities = cities.length;
+            const placedCities = totalCount;
+            const score = placedCities > 0 ? Math.round((correctCount / placedCities) * 100) : 0;
+            
+            let resultHTML = '';
+            
+            if (placedCities === 0) {
+                resultHTML = `
+                    <div class="result-title error"><i class="fas fa-exclamation-circle"></i> 尚未完成</div>
+                    <p>请将城市拖拽到相应的扣除标准区域。</p>
+                `;
+            } else if (correctCount === placedCities && placedCities === totalCities) {
+                resultHTML = `
+                    <div class="result-title success"><i class="fas fa-check-circle"></i> 完美！全部正确！</div>
+                    <p>您正确分类了所有 ${totalCities} 个城市</p>
+                    <p>得分：${score}分</p>
+                    <p>🎉 恭喜完成任务一！</p>
+                `;
+                gameScore += score;
+                updateGameStats();
+            } else {
+                resultHTML = `
+                    <div class="result-title info"><i class="fas fa-chart-bar"></i> 完成情况</div>
+                    <p>已放置：${placedCities}/${totalCities} 个城市</p>
+                    <p>正确：${correctCount} 个，错误：${placedCities - correctCount} 个</p>
+                    <p>当前得分：${score}分</p>
+                    <p>请调整错误放置的城市到正确区域</p>
+                `;
+            }
+            
+            document.getElementById('cityResultArea').innerHTML = resultHTML;
+        }
+        
+        function resetCityGame() {
+            // 清空所有拖放区域
+            ['zone1500Content', 'zone1100Content', 'zone800Content'].forEach(id => {
+                const zone = document.getElementById(id);
+                if (zone) zone.innerHTML = '';
+            });
+            
+            // 重新初始化城市列表
+            initCityGame();
+            
+            // 重置结果区域
+            document.getElementById('cityResultArea').innerHTML = `
+                <div class="result-title"><i class="fas fa-info-circle"></i> 游戏说明</div>
+                <p>请将城市拖拽到相应的扣除标准区域，然后点击"检查答案"。</p>
+                <p><strong>扣除标准说明：</strong></p>
+                <ul>
+                    <li><strong>1500元/月</strong>：直辖市、省会城市、计划单列市</li>
+                    <li><strong>1100元/月</strong>：市辖区户籍人口超过100万的城市</li>
+                    <li><strong>800元/月</strong>：市辖区户籍人口不超过100万的城市</li>
+                </ul>
+            `;
+        }
+        
+        // ========== 任务二：合同游戏 ==========
+        function initContractGame() {
+            // 绑定问题区域点击事件
+            document.querySelectorAll('.problem-area').forEach(area => {
+                area.addEventListener('click', () => {
+                    const problemId = area.dataset.problem;
+                    showFixDialog(problemId, area);
+                });
+            });
+        }
+        
+        function showFixDialog(problemId, element) {
+            currentProblem = { id: problemId, element: element };
+            
+            const problems = {
+                landlord: {
+                    description: '出租人信息不完整，缺少身份证号码',
+                    placeholder: '请输入完整的出租人信息（包括身份证号）'
+                },
+                address: {
+                    description: '地址不完整，缺少详细门牌号',
+                    placeholder: '请输入完整的房屋地址'
+                },
+                rent: {
+                    description: '租金金额应同时注明大小写',
+                    placeholder: '请输入租金金额（大小写）'
+                },
+                record: {
+                    description: '缺失租赁合同备案编号',
+                    placeholder: '请输入租赁合同备案编号'
+                },
+                property: {
+                    description: '缺失房屋所有权证号',
+                    placeholder: '请输入房屋所有权证号'
+                }
+            };
+            
+            const problem = problems[problemId];
+            document.getElementById('problemDescription').textContent = problem.description;
+            document.getElementById('fixInput').placeholder = problem.placeholder;
+            document.getElementById('fixInput').value = '';
+            document.getElementById('fixDialog').style.display = 'block';
+        }
+        
+        function applyFix() {
+            if (!currentProblem) return;
+            
+            const fixText = document.getElementById('fixInput').value.trim();
+            if (fixText) {
+                currentProblem.element.textContent = fixText;
+                currentProblem.element.style.backgroundColor = 'rgba(76, 175, 80, 0.2)';
+                currentProblem.element.style.borderLeftColor = '#4CAF50';
+                currentProblem.element.querySelector('i').style.color = '#4CAF50';
+                
+                fixedProblems++;
+                gameScore += 20;
+                updateGameStats();
+                
+                cancelFix();
+                
+                if (fixedProblems === 5) {
+                    document.getElementById('contractResultArea').innerHTML = `
+                        <div class="result-title success"><i class="fas fa-check-circle"></i> 合同审查完成！</div>
+                        <p>您已成功修复所有5个问题点</p>
+                        <p>得分：100分</p>
+                        <p>✅ 合同现在符合住房租金扣除要求</p>
+                    `;
+                }
+            }
+        }
+        
+        function cancelFix() {
+            document.getElementById('fixDialog').style.display = 'none';
+            currentProblem = null;
+        }
+        
+        function checkContractAnswers() {
+            if (fixedProblems < 5) {
+                document.getElementById('contractResultArea').innerHTML = `
+                    <div class="result-title info"><i class="fas fa-search"></i> 继续审查</div>
+                    <p>已修复：${fixedProblems}/5 个问题</p>
+                    <p>请继续点击合同中的红色高亮区域，修复剩余问题。</p>
+                `;
+            }
+        }
+        
+        function resetContractGame() {
+            // 重置合同内容
+            const contractTexts = {
+                landlord: '张先生',
+                address: '杭州市西湖区文三路',
+                rent: '2000元',
+                record: '已签订',
+                property: '产权清晰'
+            };
+            
+            document.querySelectorAll('.problem-area').forEach(area => {
+                const problemId = area.dataset.problem;
+                area.textContent = contractTexts[problemId];
+                area.style.backgroundColor = '';
+                area.style.borderLeftColor = '';
+                
+                // 重新添加图标
+                if (!area.querySelector('i')) {
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-exclamation-circle';
+                    area.insertBefore(icon, area.firstChild);
+                } else {
+                    area.querySelector('i').style.color = '#F44336';
+                }
+            });
+            
+            fixedProblems = 0;
+            gameScore = Math.max(0, gameScore - 100);
+            
+            document.getElementById('contractResultArea').innerHTML = `
+                <div class="result-title"><i class="fas fa-info-circle"></i> 合同审查说明</div>
+                <p>点击合同中的<span style="color: var(--warning-red);">红色高亮</span>区域，修复不符合住房租金扣除要求的问题。</p>
+                <p><strong>常见问题：</strong></p>
+                <ul>
+                    <li>出租人信息不完整（缺少身份证号）</li>
+                    <li>地址不完整（缺少详细门牌号）</li>
+                    <li>租金金额应同时注明大小写</li>
+                    <li>缺失租赁合同备案编号</li>
+                    <li>缺失房屋所有权证号</li>
+                </ul>
+            `;
+            
+            updateGameStats();
+        }
+        
+        // ========== 任务三：计算游戏 ==========
+        function initCalculationGame() {
+            // 租金滑块事件
+            const rentSlider = document.getElementById('rentSlider');
+            const rentValue = document.getElementById('rentValue');
+            
+            rentSlider.addEventListener('input', () => {
+                rentValue.textContent = rentSlider.value + '元';
+            });
+            
+            // 家庭状况切换
+            document.querySelectorAll('input[name="family"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const spouseOptions = document.getElementById('spouseOptions');
+                    spouseOptions.style.display = e.target.value === 'married' ? 'block' : 'none';
+                });
+            });
+            
+            // 初始化场景
+            selectScenario(1);
+        }
+        
+        function selectScenario(scenarioNum) {
+            currentScenario = scenarioNum;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.scenario-btn').forEach((btn, index) => {
+                if (index + 1 === scenarioNum) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // 更新场景内容
+            const scenarios = [
+                {
+                    title: '场景一：单身租房族',
+                    desc: '你在杭州市工作，月租金2000元，租赁期限全年',
+                    city: '杭州',
+                    rent: 2000,
+                    months: 12,
+                    family: 'single'
+                },
+                {
+                    title: '场景二：已婚夫妻同城',
+                    desc: '你在厦门市工作，月租金3000元，配偶在同城工作且有自有住房',
+                    city: '厦门',
+                    rent: 3000,
+                    months: 12,
+                    family: 'married',
+                    spouseHasHouse: true,
+                    spouseSameCity: true
+                },
+                {
+                    title: '场景三：已婚夫妻异地',
+                    desc: '你在北京市工作，月租金4000元，配偶在异地工作',
+                    city: '北京',
+                    rent: 4000,
+                    months: 12,
+                    family: 'married',
+                    spouseHasHouse: false,
+                    spouseSameCity: false
+                },
+                {
+                    title: '场景四：合租分摊',
+                    desc: '你在苏州市工作，与1人合租，月租金总额2400元',
+                    city: '苏州',
+                    rent: 2400,
+                    months: 12,
+                    family: 'single',
+                    roommates: 2
+                }
+            ];
+            
+            const scenario = scenarios[scenarioNum - 1];
+            document.getElementById('scenarioTitle').textContent = scenario.title;
+            document.getElementById('scenarioDesc').textContent = scenario.desc;
+            
+            // 设置城市选择
+            const citySelect = document.getElementById('citySelect');
+            const cityOptions = {
+                '北京': 1500, '厦门': 1500, '杭州': 1500,
+                '苏州': 1100, '温州': 1100, '佛山': 1100,
+                '伊春': 800, '七台河': 800
+            };
+            
+            for (let option of citySelect.options) {
+                if (option.text.includes(scenario.city)) {
+                    citySelect.value = option.value;
+                    break;
+                }
+            }
+            
+            // 设置租金
+            document.getElementById('rentSlider').value = scenario.rent;
+            document.getElementById('rentValue').textContent = scenario.rent + '元';
+            
+            // 设置月份
+            document.getElementById('monthsInput').value = scenario.months;
+            
+            // 设置家庭状况
+            document.querySelector(`input[name="family"][value="${scenario.family}"]`).checked = true;
+            document.getElementById('spouseOptions').style.display = scenario.family === 'married' ? 'block' : 'none';
+            
+            if (scenario.family === 'married') {
+                document.getElementById('spouseHasHouse').checked = scenario.spouseHasHouse || false;
+                document.getElementById('spouseSameCity').checked = scenario.spouseSameCity || false;
+            }
+            
+            // 设置合租人数
+            document.getElementById('roommatesInput').value = scenario.roommates || 1;
+            
+            // 隐藏之前的结果
+            document.getElementById('calculationResult').style.display = 'none';
+        }
+        
+        function calculateDeduction() {
+            // 获取输入值
+            const citySelect = document.getElementById('citySelect');
+            const selectedCity = citySelect.options[citySelect.selectedIndex].text.split(' ')[0];
+            const cityStandard = parseInt(citySelect.value);
+            
+            const actualRent = parseInt(document.getElementById('rentSlider').value);
+            const months = parseInt(document.getElementById('monthsInput').value);
+            const roommates = parseInt(document.getElementById('roommatesInput').value);
+            
+            const isMarried = document.querySelector('input[name="family"]:checked').value === 'married';
+            const spouseHasHouse = isMarried ? document.getElementById('spouseHasHouse').checked : false;
+            const spouseSameCity = isMarried ? document.getElementById('spouseSameCity').checked : false;
+            
+            // 计算扣除额
+            let monthlyDeduction = 0;
+            let explanation = '';
+            
+            if (isMarried && spouseSameCity && spouseHasHouse) {
+                // 夫妻同城且一方有房，双方都不能扣除
+                monthlyDeduction = 0;
+                explanation = '夫妻双方在同一城市工作，其中一方有自有住房的，双方均不能享受住房租金扣除。';
+            } else if (isMarried && !spouseSameCity && !spouseHasHouse) {
+                // 夫妻异地且双方都无房，可以分别扣除
+                monthlyDeduction = Math.min(actualRent, cityStandard);
+                explanation = `夫妻双方主要工作城市不同，且都无自有住房的，可以分别享受住房租金扣除。${selectedCity}的扣除标准为${cityStandard}元/月。`;
+            } else {
+                // 其他情况
+                const rentPerPerson = actualRent / roommates;
+                monthlyDeduction = Math.min(rentPerPerson, cityStandard);
+                explanation = `${selectedCity}的扣除标准为${cityStandard}元/月，实际租金${actualRent}元，${roommates > 1 ? `合租分摊后每人${rentPerPerson.toFixed(0)}元，` : ''}按标准扣除${monthlyDeduction}元/月。`;
+            }
+            
+            const annualDeduction = monthlyDeduction * months;
+            
+            // 显示结果
+            document.getElementById('resultText').innerHTML = `
+                <p><strong>月扣除额：</strong>${monthlyDeduction}元</p>
+                <p><strong>年扣除额：</strong>${annualDeduction}元（${months}个月）</p>
+                <p><strong>可节省税款：</strong>约${(annualDeduction * 0.03).toFixed(0)}元（按3%税率估算）</p>
+            `;
+            
+            document.getElementById('explanationText').textContent = explanation;
+            document.getElementById('calculationResult').style.display = 'block';
+            
+            // 更新分数
+            gameScore += 25;
+            updateGameStats();
+        }
+        
+        function resetCalculator() {
+            selectScenario(1);
+            document.getElementById('calculationResult').style.display = 'none';
+        }
+        
+        // ========== 任务四：材料游戏 ==========
+        function initMaterialsGame() {
+            const materials = [
+                { id: 'contract', name: '房屋租赁合同', desc: '已备案的正式租赁合同', icon: 'fa-file-contract', required: true },
+                { id: 'invoice', name: '租赁发票', desc: '租金支付凭证或发票', icon: 'fa-receipt', required: true },
+                { id: 'property', name: '房产证明', desc: '出租方房产证复印件', icon: 'fa-home', required: true },
+                { id: 'record', name: '备案证明', desc: '租赁合同备案登记证明', icon: 'fa-stamp', required: true },
+                { id: 'id', name: '身份证', desc: '承租人身份证复印件', icon: 'fa-id-card', required: true },
+                { id: 'photo', name: '个人照片', desc: '一寸免冠照片', icon: 'fa-camera', required: false },
+                { id: 'resume', name: '个人简历', desc: '工作经历说明', icon: 'fa-file-alt', required: false },
+                { id: 'certificate', name: '学历证书', desc: '最高学历证明', icon: 'fa-graduation-cap', required: false },
+                { id: 'bank', name: '银行流水', desc: '近半年银行对账单', icon: 'fa-university', required: false },
+                { id: 'tax', name: '纳税证明', desc: '上年个人所得税完税证明', icon: 'fa-file-invoice-dollar', required: false }
+            ];
+            
+            const materialsGrid = document.getElementById('materialsGrid');
+            materialsGrid.innerHTML = '';
+            
+            // 随机排序材料
+            const shuffledMaterials = [...materials].sort(() => Math.random() - 0.5);
+            
+            shuffledMaterials.forEach(material => {
+                const card = document.createElement('div');
+                card.className = `material-card ${material.required ? 'required' : 'not-required'}`;
+                card.dataset.id = material.id;
+                card.dataset.required = material.required;
+                
+                card.innerHTML = `
+                    <div class="material-icon">
+                        <i class="fas ${material.icon}"></i>
+                    </div>
+                    <div class="material-name">${material.name}</div>
+                    <div class="material-desc">${material.desc}</div>
+                    <div class="material-status">${material.required ? '必须' : '不需要'}</div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    if (!materialsGameActive) return;
+                    
+                    if (material.required && !card.classList.contains('selected')) {
+                        // 选择必须材料
+                        card.classList.add('selected');
+                        selectedMaterials.push(material.id);
+                        
+                        // 检查是否收集完所有必须材料
+                        if (selectedMaterials.length === requiredMaterials.length) {
+                            endMaterialsGame(true);
+                        }
+                    } else if (!material.required) {
+                        // 选择了不需要的材料，游戏结束
+                        endMaterialsGame(false);
+                    }
+                });
+                
+                materialsGrid.appendChild(card);
+            });
+        }
+        
+        function startMaterialsGame() {
+            if (materialsGameActive) return;
+            
+            materialsGameActive = true;
+            materialsTimeLeft = 300; // 5分钟
+            selectedMaterials = [];
+            
+            // 重置材料卡片
+            document.querySelectorAll('.material-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 启动倒计时
+            const timer = setInterval(() => {
+                if (!materialsGameActive) {
+                    clearInterval(timer);
+                    return;
+                }
+                
+                materialsTimeLeft--;
+                
+                const minutes = Math.floor(materialsTimeLeft / 60);
+                const seconds = materialsTimeLeft % 60;
+                document.getElementById('timerDisplay').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // 时间到
+                if (materialsTimeLeft <= 0) {
+                    clearInterval(timer);
+                    endMaterialsGame(false);
+                }
+            }, 1000);
+            
+            // 更新按钮状态
+            document.querySelector('.btn-primary').innerHTML = '<i class="fas fa-pause"></i> 游戏中...';
+            document.querySelector('.btn-primary').onclick = () => {
+                materialsGameActive = false;
+                document.querySelector('.btn-primary').innerHTML = '<i class="fas fa-play"></i> 继续游戏';
+                document.querySelector('.btn-primary').onclick = () => startMaterialsGame();
+            };
+        }
+        
+        function endMaterialsGame(success) {
+            materialsGameActive = false;
+            
+            let resultHTML = '';
+            if (success) {
+                resultHTML = `
+                    <div class="result-title success"><i class="fas fa-trophy"></i> 任务完成！</div>
+                    <p>您在${formatTime(300 - materialsTimeLeft)}内收集了所有必须材料</p>
+                    <p>得分：100分</p>
+                    <p>🎉 恭喜您掌握了申报材料要求！</p>
+                `;
+                gameScore += 100;
+            } else {
+                const collected = selectedMaterials.length;
+                resultHTML = `
+                    <div class="result-title ${materialsTimeLeft <= 0 ? 'error' : 'info'}">
+                        <i class="fas fa-${materialsTimeLeft <= 0 ? 'clock' : 'exclamation-triangle'}"></i> 
+                        ${materialsTimeLeft <= 0 ? '时间到！' : '游戏结束！'}
+                    </div>
+                    <p>已收集：${collected}/5 个必须材料</p>
+                    <p>${materialsTimeLeft <= 0 ? '时间已用完' : '选择了不需要的材料'}</p>
+                    <p>得分：${collected * 20}分</p>
+                `;
+                gameScore += collected * 20;
+            }
+            
+            document.getElementById('materialsResultArea').innerHTML = resultHTML;
+            updateGameStats();
+            
+            // 重置按钮
+            document.querySelector('.btn-primary').innerHTML = '<i class="fas fa-play"></i> 重新开始';
+            document.querySelector('.btn-primary').onclick = () => startMaterialsGame();
+        }
+        
+        function resetMaterialsGame() {
+            materialsGameActive = false;
+            materialsTimeLeft = 300;
+            selectedMaterials = [];
+            
+            document.getElementById('timerDisplay').textContent = '05:00';
+            document.getElementById('materialsResultArea').innerHTML = `
+                <div class="result-title"><i class="fas fa-info-circle"></i> 材料准备说明</div>
+                <p>点击<span style="color: var(--primary-blue);">蓝色边框</span>的材料卡片（必须材料），避免点击<span style="color: #ddd;">灰色边框</span>的卡片（不需要材料）。</p>
+                <p><strong>必须材料包括：</strong></p>
+                <ul>
+                    <li>房屋租赁合同（已备案）</li>
+                    <li>租赁发票或支付凭证</li>
+                    <li>出租方房产证明</li>
+                    <li>租赁合同备案证明</li>
+                    <li>承租人身份证</li>
+                </ul>
+            `;
+            
+            // 重置材料卡片
+            document.querySelectorAll('.material-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // 重置按钮
+            document.querySelector('.btn-primary').innerHTML = '<i class="fas fa-play"></i> 开始游戏';
+            document.querySelector('.btn-primary').onclick = () => startMaterialsGame();
+        }
+        
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}分${secs}秒`;
+        }
+        
+        // 页面加载后自动初始化
+        setTimeout(() => {
+            console.log('游戏初始化完成');
+            updateGameStats();
+        }, 500);
+    </script>
+</body>
+</html>
+

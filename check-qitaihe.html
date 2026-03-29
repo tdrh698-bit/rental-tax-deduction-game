@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>七台河显示问题检查 - 4个任务全面检查</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #1E5AA8;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1E5AA8;
+            padding-bottom: 10px;
+        }
+        
+        .task-section {
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1E5AA8;
+            background: #f8f9fa;
+        }
+        
+        .task-section.error {
+            border-left-color: #F44336;
+            background: #FFF5F5;
+        }
+        
+        .task-section.success {
+            border-left-color: #4CAF50;
+            background: #F0FFF4;
+        }
+        
+        .task-section.warning {
+            border-left-color: #FF9800;
+            background: #FFF8E1;
+        }
+        
+        .task-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .task-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .status-error {
+            background: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .status-warning {
+            background: #FFF3E0;
+            color: #F57C00;
+        }
+        
+        .check-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .check-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .check-list .success {
+            color: #388E3C;
+        }
+        
+        .check-list .error {
+            color: #D32F2F;
+        }
+        
+        .check-list .warning {
+            color: #F57C00;
+        }
+        
+        .city-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .city-item {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        
+        .city-item.qitaihe {
+            border-color: #7B1FA2;
+            background: #F3E5F5;
+            font-weight: bold;
+        }
+        
+        .city-name {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .city-details {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #1E5AA8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2D7DD2;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .test-links {
+            margin-top: 30px;
+            padding: 20px;
+            background: #F0F7FF;
+            border-radius: 8px;
+        }
+        
+        .test-links a {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #1E5AA8;
+            border: 1px solid #ddd;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        
+        .test-links a:hover {
+            background: #e3f2fd;
+            border-color: #1E5AA8;
+        }
+        
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 七台河显示问题检查 - 4个任务全面诊断</h1>
+        
+        <div class="task-section warning">
+            <h2><i class="fas fa-search"></i> 问题描述</h2>
+            <p><strong>问题：</strong>七台河市在游戏中没有显示</p>
+            <p><strong>检查范围：</strong>所有4个任务关卡</p>
+            <p><strong>目标：</strong>找出七台河不显示的原因并修复</p>
+        </div>
+        
+        <div id="task1Check" class="task-section">
+            <div class="task-header">
+                <div class="task-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    任务一：城市等级判断
+                </div>
+                <div class="status-badge status-warning">检查中...</div>
+            </div>
+            <div id="task1Result"></div>
+        </div>
+        
+        <div id="task2Check" class="task-section">
+            <div class="task-header">
+                <div class="task-title">
+                    <i class="fas fa-file-contract"></i>
+                    任务二：租赁合同审查
+                </div>
+                <div class="status-badge status-warning">检查中...</div>
+            </div>
+            <div id="task2Result"></div>
+        </div>
+        
+        <div id="task3Check" class="task-section">
+            <div class="task-header">
+                <div class="task-title">
+                    <i class="fas fa-calculator"></i>
+                    任务三：扣除计算实战
+                </div>
+                <div class="status-badge status-warning">检查中...</div>
+            </div>
+            <div id="task3Result"></div>
+        </div>
+        
+        <div id="task4Check" class="task-section">
+            <div class="task-header">
+                <div class="task-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    任务四：申报材料准备
+                </div>
+                <div class="status-badge status-warning">检查中...</div>
+            </div>
+            <div id="task4Result"></div>
+        </div>
+        
+        <div id="fileCheck" class="task-section">
+            <div class="task-header">
+                <div class="task-title">
+                    <i class="fas fa-file-code"></i>
+                    文件数据检查
+                </div>
+                <div class="status-badge status-warning">检查中...</div>
+            </div>
+            <div id="fileCheckResult"></div>
+        </div>
+        
+        <div class="test-links">
+            <h2><i class="fas fa-link"></i> 测试链接</h2>
+            <p>使用以下链接测试各任务：</p>
+            
+            <a href="http://43.153.117.19:3000/index.html?check=qitaihe" target="_blank">
+                主游戏页面 - 检查任务一
+            </a>
+            
+            <a href="http://43.153.117.19:3000/test-game.html?check=qitaihe" target="_blank">
+                综合测试页面 - 检查所有任务
+            </a>
+            
+            <a href="http://43.153.117.19:3000/city-fix-verify.html?check=qitaihe" target="_blank">
+                城市验证页面 - 检查数据
+            </a>
+            
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="runAllChecks()">
+                    <i class="fas fa-play"></i> 重新运行所有检查
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showFixOptions()">
+                    <i class="fas fa-wrench"></i> 查看修复选项
+                </button>
+            </div>
+        </div>
+        
+        <div id="fixOptions" style="display: none; margin-top: 20px; padding: 20px; background: #FFF3E0; border-radius: 8px;">
+            <h3><i class="fas fa-wrench"></i> 修复选项</h3>
+            <div id="fixOptionsContent"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 所有8个城市
+        const allCities = [
+            { name: "北京市", short: "北京", zone: 1500, type: "直辖市" },
+            { name: "厦门市", short: "厦门", zone: 1500, type: "计划单列市" },
+            { name: "杭州市", short: "杭州", zone: 1500, type: "省会城市" },
+            { name: "苏州市", short: "苏州", zone: 1100, type: "人口>100万" },
+            { name: "温州市", short: "温州", zone: 1100, type: "人口>100万" },
+            { name: "佛山市", short: "佛山", zone: 1100, type: "人口>100万" },
+            { name: "伊春市", short: "伊春", zone: 800, type: "人口≤100万" },
+            { name: "七台河市", short: "七台河", zone: 800, type: "人口≤100万" }
+        ];
+        
+        // 检查任务一：城市等级判断
+        async function checkTask1() {
+            const element = document.getElementById('task1Check');
+            const resultElement = document.getElementById('task1Result');
+            
+            try {
+                // 检查 app.js
+                const appJsResponse = await fetch('app.js?t=' + new Date().getTime());
+                const appJsContent = await appJsResponse.text();
+                
+                // 检查 game.js
+                const gameJsResponse = await fetch('game.js?t=' + new Date().getTime());
+                const gameJsContent = await gameJsResponse.text();
+                
+                // 检查七台河是否存在
+                const appHasQitaihe = appJsContent.includes('"七台河市"');
+                const gameHasQitaihe = gameJsContent.includes('"七台河市"');
+                
+                // 检查城市数组
+                const appCitiesMatch = appJsContent.match(/this\.cities\s*=\s*\[([\s\S]*?)\]\s*;/);
+                const gameCitiesMatch = gameJsContent.match(/this\.cities\s*=\s*\[([\s\S]*?)\]\s*;/);
+                
+                let appCityCount = 0;
+                let gameCityCount = 0;
+                let appCityNames = [];
+                let gameCityNames = [];
+                
+                if (appCitiesMatch) {
+                    const citiesText = appCitiesMatch[1];
+                    appCityCount = (citiesText.match(/name:/g) || []).length;
+                    
+                    // 提取城市名
+                    const cityMatches = citiesText.match(/"([^"]+)"/g);
+                    if (cityMatches) {
+                        appCityNames = cityMatches.map(c => c.replace(/"/g, ''));
+                    }
+                }
+                
+                if (gameCitiesMatch) {
+                    const citiesText = gameCitiesMatch[1];
+                    gameCityCount = (citiesText.match(/name:/g) || []).length;
+                    
+                    // 提取城市名
+                    const cityMatches = citiesText.match(/"([^"]+)"/g);
+                    if (cityMatches) {
+                        gameCityNames = cityMatches.map(c => c.replace(/"/g, ''));
+                    }
+                }
+                
+                // 显示结果
+                let html = '<div class="check-list">';
+                
+                html += `<li class="${appHasQitaihe ? 'success' : 'error'}">`;
+                html += `app.js: ${appHasQitaihe ? '✅ 包含七台河市' : '❌ 缺少七台河市'}`;
+                html += ` (${appCityCount}个城市)`;
+                html += '</li>';
+                
+                html += `<li class="${gameHasQitaihe ? 'success' : 'error'}">`;
+                html += `game.js: ${gameHasQitaihe ? '✅ 包含七台河市' : '❌ 缺少七台河市'}`;
+                html += ` (${gameCityCount}个城市)`;
+                html += '</li>';
+                
+                // 显示城市列表
+                html += '</div>';
+                
+                html += '<h4>app.js 城市列表:</h4>';
+                html += '<div class="city-display">';
+                allCities.forEach(city => {
+                    const hasCity = appCityNames.includes(city.name);
+                    html += `
+                        <div class="city-item ${city.name === '七台河市' ? 'qitaihe' : ''} ${hasCity ? '' : 'error'}">
+                            <div class="city-name">${city.name}</div>
+                            <div class="city-details">¥${city.zone}/月</div>
+                            <div class="city-details">${hasCity ? '✅' : '❌'}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                html += '<h4>game.js 城市列表:</h4>';
+                html += '<div class="city-display">';
+                allCities.forEach(city => {
+                    const hasCity = gameCityNames.includes(city.name);
+                    html += `
+                        <div class="city-item ${city.name === '七台河市' ? 'qitaihe' : ''} ${hasCity ? '' : 'error'}">
+                            <div class="city-name">${city.name}</div>
+                            <div class="city-details">¥${city.zone}/月</div>
+                            <div class="city-details">${hasCity ? '✅' : '❌'}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                // 更新状态
+                const statusBadge = element.querySelector('.status-badge');
+                if (appHasQitaihe && gameHasQitaihe && appCityCount === 8 && gameCityCount === 8) {
+                    element.className = 'task-section success';
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = '✅ 正常';
+                    html += '<p style="color: #4CAF50; margin-top: 10px;"><i class="fas fa-check-circle"></i> 任务一数据正常，七台河已包含。</p>';
+                } else {
+                    element.className = 'task-section error';
+                    statusBadge.className = 'status-badge status-error';
+                    statusBadge.textContent = '❌ 问题';
+                    html += '<p style="color: #F44336; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> 任务一发现问题，七台河可能缺失。</p>';
+                }
+                
+                resultElement.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'task-section error';
+                element.querySelector('.status-badge').className = 'status-badge status-error';
+                element.querySelector('.status-badge').textContent = '❌ 错误';
+                resultElement.innerHTML = `<p style="color: #F44336;">检查失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 检查任务二：租赁合同审查
+        async function checkTask2() {
+            const element = document.getElementById('task2Check');
+            const resultElement = document.getElementById('task2Result');
+            
+            try {
+                // 任务二不涉及城市数据，主要检查文件是否存在
+                const contractResponse = await fetch('contract-game.js?t=' + new Date().getTime());
+                const contractExists = contractResponse.ok;
+                
+                let html = '<div class="check-list">';
+                html += `<li class="${contractExists ? 'success' : 'error'}">`;
+                html += `contract-game.js: ${contractExists ? '✅ 文件存在' : '❌ 文件缺失'}`;
+                html += '</li>';
+                
+                if (contractExists) {
+                    const contractContent = await contractResponse.text();
+                    const hasQitaihe = contractContent.includes('七台河');
+                    html += `<li class="${hasQitaihe ? 'warning' : 'success'}">`;
+                    html += `七台河引用: ${hasQitaihe ? '⚠️ 不应出现' : '✅ 正常（不应出现）'}`;
+                    html += '</li>';
+                }
+                
+                html += '</div>';
+                html += '<p>任务二不涉及城市分类，主要检查租赁合同审查功能。</p>';
+                
+                // 更新状态
+                const statusBadge = element.querySelector('.status-badge');
+                if (contractExists) {
+                    element.className = 'task-section success';
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = '✅ 正常';
+                } else {
+                    element.className = 'task-section error';
+                    statusBadge.className = 'status-badge status-error';
+                    statusBadge.textContent = '❌ 问题';
+                }
+                
+                resultElement.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'task-section error';
+                element.querySelector('.status-badge').className = 'status-badge status-error';
+                element.querySelector('.status-badge').textContent = '❌ 错误';
+                resultElement.innerHTML = `<p style="color: #F44336;">检查失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 检查任务三：扣除计算实战
+        async function checkTask3() {
+            const element = document.getElementById('task3Check');
+            const resultElement = document.getElementById('task3Result');
+            
+            try {
+                // 检查 calculation-game.js
+                const calcResponse = await fetch('calculation-game.js?t=' + new Date().getTime());
+                const calcContent = await calcResponse.text();
+                
+                // 检查七台河是否存在
+                const hasQitaihe = calcContent.includes("'七台河'") || calcContent.includes('"七台河"');
+                
+                // 检查扣除标准数据
+                const standardsMatch = calcContent.match(/this\.deductionStandards\s*=\s*\{([\s\S]*?)\}\s*;/);
+                
+                let standardsText = '';
+                let hasQitaiheInStandards = false;
+                let cityCount = 0;
+                
+                if (standardsMatch) {
+                    standardsText = standardsMatch[1];
+                    hasQitaiheInStandards = standardsText.includes("'七台河'");
+                    
+                    // 计算城市数量
+                    const cityMatches = standardsText.match(/'([^']+)'/g);
+                    if (cityMatches) {
+                        cityCount = cityMatches.length;
+                    }
+                }
+                
+                // 检查场景数据
+                const hasQitaiheInScenarios = calcContent.includes('city: \'七台河\'') || 
+                                            calcContent.includes('city: "七台河"');
+                
+                let html = '<div class="check-list">';
+                
+                html += `<li class="${hasQitaihe ? 'success' : 'error'}">`;
+                html += `七台河引用: ${hasQitaihe ? '✅ 存在' : '❌ 缺失'}`;
+                html += '</li>';
+                
+                html += `<li class="${hasQitaiheInStandards ? 'success' : 'error'}">`;
+                html += `扣除标准: ${hasQitaiheInStandards ? '✅ 包含七台河' : '❌ 缺少七台河'}`;
+                html += ` (${cityCount}个城市)`;
+                html += '</li>';
+                
+                html += `<li class="${hasQitaiheInScenarios ? 'success' : 'warning'}">`;
+                html += `计算场景: ${hasQitaiheInScenarios ? '✅ 有七台河场景' : '⚠️ 无七台河场景（正常）'}`;
+                html += '</li>';
+                
+                html += '</div>';
+                
+                // 显示扣除标准
+                if (standardsText) {
+                    html += '<h4>扣除标准数据:</h4>';
+                    html += '<div class="code-block">';
+                    html += standardsText.replace(/'/g, '"').replace(/,/g, ',\n');
+                    html += '</div>';
+                }
+                
+                // 更新状态
+                const statusBadge = element.querySelector('.status-badge');
+                if (hasQitaihe && hasQitaiheInStandards) {
+                    element.className = 'task-section success';
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = '✅ 正常';
+                    html += '<p style="color: #4CAF50; margin-top: 10px;"><i class="fas fa-check-circle"></i> 任务三数据正常，七台河已包含在扣除标准中。</p>';
+                } else {
+                    element.className = 'task-section error';
+                    statusBadge.className = 'status-badge status-error';
+                    statusBadge.textContent = '❌ 问题';
+                    html += '<p style="color: #F44336; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> 任务三发现问题，七台河可能缺失。</p>';
+                }
+                
+                resultElement.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'task-section error';
+                element.querySelector('.status-badge').className = 'status-badge status-error';
+                element.querySelector('.status-badge').textContent = '❌ 错误';
+                resultElement.innerHTML = `<p style="color: #F44336;">检查失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 检查任务四：申报材料准备
+        async function checkTask4() {
+            const element = document.getElementById('task4Check');
+            const resultElement = document.getElementById('task4Result');
+            
+            try {
+                // 检查 materials-game.js
+                const materialsResponse = await fetch('materials-game.js?t=' + new Date().getTime());
+                const materialsExists = materialsResponse.ok;
+                
+                let html = '<div class="check-list">';
+                html += `<li class="${materialsExists ? 'success' : 'error'}">`;
+                html += `materials-game.js: ${materialsExists ? '✅ 文件存在' : '❌ 文件缺失'}`;
+                html += '</li>';
+                
+                if (materialsExists) {
+                    const materialsContent = await materialsResponse.text();
+                    const hasQitaihe = materialsContent.includes('七台河');
+                    html += `<li class="${hasQitaihe ? 'warning' : 'success'}">`;
+                    html += `七台河引用: ${hasQitaihe ? '⚠️ 不应出现' : '✅ 正常（不应出现）'}`;
+                    html += '</li>';
+                    
+                    // 检查类是否正确定义
+                    const hasMaterialsClass = materialsContent.includes('class MaterialsGame');
+                    html += `<li class="${hasMaterialsClass ? 'success' : 'error'}">`;
+                    html += `MaterialsGame类: ${hasMaterialsClass ? '✅ 正确定义' : '❌ 未定义'}`;
+                    html += '</li>';
+                }
+                
+                html += '</div>';
+                html += '<p>任务四不涉及城市数据，主要检查申报材料准备功能。</p>';
+                
+                // 更新状态
+                const statusBadge = element.querySelector('.status-badge');
+                if (materialsExists) {
+                    element.className = 'task-section success';
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = '✅ 正常';
+                } else {
+                    element.className = 'task-section error';
+                    statusBadge.className = 'status-badge status-error';
+                    statusBadge.textContent = '❌ 问题';
+                }
+                
+                resultElement.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'task-section error';
+                element.querySelector('.status-badge').className = 'status-badge status-error';
+                element.querySelector('.status-badge').textContent = '❌ 错误';
+                resultElement.innerHTML = `<p style="color: #F44336;">检查失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 检查文件数据
+        async function checkFiles() {
+            const element = document.getElementById('fileCheck');
+            const resultElement = document.getElementById('fileCheckResult');
+            
+            try {
+                // 检查所有相关文件
+                const filesToCheck = [
+                    { name: 'app.js', url: 'app.js' },
+                    { name: 'game.js', url: 'game.js' },
+                    { name: 'calculation-game.js', url: 'calculation-game.js' },
+                    { name: 'contract-game.js', url: 'contract-game.js' },
+                    { name: 'materials-game.js', url: 'materials-game.js' }
+                ];
+                
+                let html = '<div class="check-list">';
+                let allFilesOk = true;
+                let qitaiheIssues = [];
+                
+                for (const file of filesToCheck) {
+                    try {
+                        const response = await fetch(file.url + '?t=' + new Date().getTime());
+                        const exists = response.ok;
+                        
+                        if (exists) {
+                            const content = await response.text();
+                            const hasQitaihe = content.includes('七台河');
+                            const shouldHaveQitaihe = ['app.js', 'game.js', 'calculation-game.js'].includes(file.name);
+                            
+                            html += `<li class="${exists ? 'success' : 'error'}">`;
+                            html += `${file.name}: ${exists ? '✅ 存在' : '❌ 缺失'}`;
+                            
+                            if (exists) {
+                                if (shouldHaveQitaihe && !hasQitaihe) {
+                                    html += ` <span class="error">(缺少七台河)</span>`;
+                                    qitaiheIssues.push(`${file.name} 缺少七台河`);
+                                    allFilesOk = false;
+                                } else if (!shouldHaveQitaihe && hasQitaihe) {
+                                    html += ` <span class="warning">(不应有七台河)</span>`;
+                                } else {
+                                    html += ` <span class="success">(七台河${shouldHaveQitaihe ? '正常' : '正常无'})</span>`;
+                                }
+                            }
+                            
+                            html += '</li>';
+                        } else {
+                            html += `<li class="error">${file.name}: ❌ 文件缺失</li>`;
+                            allFilesOk = false;
+                        }
+                    } catch (error) {
+                        html += `<li class="error">${file.name}: ❌ 检查失败 (${error.message})</li>`;
+                        allFilesOk = false;
+                    }
+                }
+                
+                html += '</div>';
+                
+                // 显示问题总结
+                if (qitaiheIssues.length > 0) {
+                    html += '<h4>七台河问题总结:</h4>';
+                    html += '<ul>';
+                    qitaiheIssues.forEach(issue => {
+                        html += `<li style="color: #F44336;">❌ ${issue}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                // 更新状态
+                const statusBadge = element.querySelector('.status-badge');
+                if (allFilesOk && qitaiheIssues.length === 0) {
+                    element.className = 'task-section success';
+                    statusBadge.className = 'status-badge status-success';
+                    statusBadge.textContent = '✅ 正常';
+                    html += '<p style="color: #4CAF50; margin-top: 10px;"><i class="fas fa-check-circle"></i> 所有文件检查正常，七台河数据完整。</p>';
+                } else {
+                    element.className = 'task-section error';
+                    statusBadge.className = 'status-badge status-error';
+                    statusBadge.textContent = '❌ 问题';
+                    html += '<p style="color: #F44336; margin-top: 10px;"><i class="fas fa-exclamation-triangle"></i> 发现文件问题，七台河可能缺失。</p>';
+                }
+                
+                resultElement.innerHTML = html;
+                
+            } catch (error) {
+                element.className = 'task-section error';
+                element.querySelector('.status-badge').className = 'status-badge status-error';
+                element.querySelector('.status-badge').textContent = '❌ 错误';
+                resultElement.innerHTML = `<p style="color: #F44336;">检查失败: ${error.message}</p>`;
+            }
+        }
+        
+        // 运行所有检查
+        async function runAllChecks() {
+            await checkTask1();
+            await checkTask2();
+            await checkTask3();
+            await checkTask4();
+            await checkFiles();
+        }
+        
+        // 显示修复选项
+        function showFixOptions() {
+            const fixOptions = document.getElementById('fixOptions');
+            const content = document.getElementById('fixOptionsContent');
+            
+            fixOptions.style.display = 'block';
+            content.innerHTML = `
+                <p>如果七台河没有显示，可以尝试以下修复：</p>
+                <ol>
+                    <li><strong>强制刷新浏览器缓存</strong> - 按 Ctrl+F5 (Win) 或 Cmd+Shift+R (Mac)</li>
+                    <li><strong>清除浏览器缓存</strong> - 设置 → 隐私和安全 → 清除浏览数据</li>
+                    <li><strong>使用无痕模式</strong> - 打开隐私浏览窗口测试</li>
+                    <li><strong>检查文件是否正确</strong> - 使用上方检查功能验证文件</li>
+                    <li><strong>重启服务器</strong> - 确保加载最新文件</li>
+                </ol>
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="forceRefreshAll()">
+                        <i class="fas fa-sync-alt"></i> 强制刷新所有页面
+                    </button>
+                    <button class="btn btn-secondary" onclick="runAllChecks()">
+                        <i class="fas fa-redo"></i> 重新运行检查
+                    </button>
+                </div>
+            `;
+        }
+        
+        // 强制刷新所有页面
+        function forceRefreshAll() {
+            if (confirm('这将打开所有测试页面并强制刷新。确定要继续吗？')) {
+                const timestamp = new Date().getTime();
+                const links = [
+                    'index.html',
+                    'test-game.html',
+                    'check-qitaihe.html',
+                    'city-fix-verify.html'
+                ];
+                
+                links.forEach(link => {
+                    window.open(`http://43.153.117.19:3000/${link}?force=${timestamp}`, '_blank');
+                });
+            }
+        }
+        
+        // 页面加载后运行检查
+        document.addEventListener('DOMContentLoaded', runAllChecks);
+        
+        // 添加Font Awesome图标
+        const faScript = document.createElement('script');
+        faScript.src = 'https://kit.fontawesome.com/a076d05399.js';
+        faScript.crossOrigin = 'anonymous';
+        document.head.appendChild(faScript);
+    </script>
+</body>
+</html>
