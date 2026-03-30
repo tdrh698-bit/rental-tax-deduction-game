@@ -1,0 +1,56 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Verify files
+      run: |
+        echo "📁 项目文件检查:"
+        ls -la *.html | head -10
+        echo "总HTML文件数: $(ls -la *.html | wc -l)"
+        echo "项目大小: $(du -sh .)"
+        
+    - name: Create deployment package
+      run: |
+        # 创建部署包
+        mkdir -p _site
+        cp -r *.html *.js *.md *.yml *.json _site/ 2>/dev/null || true
+        echo "✅ 部署包创建完成"
+        ls -la _site/ | head -10
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: rental-game-files
+        path: _site/
+        
+    - name: Deploy to Cloudflare Pages (模拟)
+      run: |
+        echo "🚀 模拟部署到 Cloudflare Pages"
+        echo "项目名称: rental-tax-deduction-game"
+        echo "分支: ${{ github.ref }}"
+        echo "提交: ${{ github.sha }}"
+        echo "预计域名: https://rental-tax-deduction-game.pages.dev"
+        echo ""
+        echo "📋 部署文件清单:"
+        find . -name "*.html" -type f | head -20
+        echo ""
+        echo "✅ 部署准备完成"
+        echo "请在 Cloudflare Dashboard 中完成实际部署配置"
