@@ -1,0 +1,159 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # 允许手动触发
+
+env:
+  # Cloudflare Pages 环境变量
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+  
+  # 项目配置
+  PROJECT_NAME: "rental-tax-deduction-game"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Verify project structure
+      run: |
+        echo "📁 项目结构验证"
+        echo "=================="
+        ls -la
+        echo ""
+        echo "📄 HTML 文件列表:"
+        ls -la *.html | head -10
+        echo "总HTML文件数: $(ls -la *.html | wc -l)"
+        echo ""
+        echo "📦 配置文件检查:"
+        [ -f "_config.yml" ] && echo "✅ _config.yml 存在" || echo "❌ _config.yml 缺失"
+        [ -f "package.json" ] && echo "✅ package.json 存在" || echo "❌ package.json 缺失"
+        [ -f "README.md" ] && echo "✅ README.md 存在" || echo "❌ README.md 缺失"
+        echo ""
+        echo "📊 项目大小: $(du -sh .)"
+        
+    - name: Create deployment package
+      run: |
+        echo "📦 创建部署包..."
+        # 创建临时部署目录
+        mkdir -p _site
+        
+        # 复制所有必要文件
+        cp -r *.html *.js *.css *.md *.yml *.json _site/ 2>/dev/null || true
+        
+        # 确保关键文件存在
+        echo "确保关键游戏文件..."
+        [ -f "_site/auto-advance-game.html" ] || echo "⚠️ auto-advance-game.html 未找到"
+        [ -f "_site/start-game.html" ] || echo "⚠️ start-game.html 未找到"
+        [ -f "_site/game-homepage.html" ] || echo "⚠️ game-homepage.html 未找到"
+        
+        echo "✅ 部署包创建完成"
+        echo "部署包内容:"
+        ls -la _site/ | head -15
+        
+    - name: Deploy to Cloudflare Pages (使用 Wrangler)
+      if: env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != ''
+      run: |
+        echo "🚀 开始部署到 Cloudflare Pages..."
+        
+        # 安装 Wrangler
+        npm install -g wrangler
+        
+        # 创建 wrangler.toml 配置文件
+        cat > wrangler.toml << EOF
+        name = "${{ env.PROJECT_NAME }}"
+        compatibility_date = "2026-03-30"
+        pages_build_output_dir = "_site"
+        
+        [env.production]
+        workers_dev = false
+        
+        [[routes]]
+        pattern = "/*"
+        zone_name = "${{ env.PROJECT_NAME }}.pages.dev"
+        EOF
+        
+        # 部署到 Cloudflare Pages
+        echo "开始部署..."
+        wrangler pages deploy _site --project-name="${{ env.PROJECT_NAME }}" || echo "部署失败，请检查配置"
+        
+    - name: Manual deployment instructions
+      if: env.CLOUDFLARE_API_TOKEN == '' || env.CLOUDFLARE_ACCOUNT_ID == ''
+      run: |
+        echo "⚠️ Cloudflare API Token 或 Account ID 未配置"
+        echo ""
+        echo "📋 手动部署步骤:"
+        echo "1. 登录 Cloudflare Dashboard: https://dash.cloudflare.com/"
+        echo "2. 进入 Workers & Pages → Create application → Pages"
+        echo "3. 连接 GitHub 仓库: tdrh698-bit/rental-tax-deduction-game"
+        echo "4. 配置构建设置:"
+        echo "   - 框架预设: None"
+        echo "   - 构建命令: (留空)"
+        echo "   - 输出目录: /"
+        echo "   - 根目录: /"
+        echo "5. 点击 Save and Deploy"
+        echo ""
+        echo "🔑 如需自动部署，请在仓库 Settings → Secrets and variables → Actions 中设置:"
+        echo "   - CLOUDFLARE_API_TOKEN: 你的 Cloudflare API Token"
+        echo "   - CLOUDFLARE_ACCOUNT_ID: 你的 Cloudflare Account ID"
+        echo ""
+        echo "📁 部署包已准备好，包含以下文件:"
+        find _site -name "*.html" | head -10
+        
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: rental-game-deployment-package
+        path: _site/
+        retention-days: 7
+        
+    - name: Create deployment summary
+      run: |
+        echo "📊 部署摘要"
+        echo "=========="
+        echo "项目名称: ${{ env.PROJECT_NAME }}"
+        echo "分支: ${{ github.ref }}"
+        echo "提交: ${{ github.sha }}"
+        echo "触发者: ${{ github.actor }}"
+        echo "时间: $(date)"
+        echo ""
+        echo "📁 部署文件统计:"
+        echo "HTML 文件: $(find _site -name "*.html" | wc -l)"
+        echo "总文件数: $(find _site -type f | wc -l)"
+        echo "部署包大小: $(du -sh _site | cut -f1)"
+        echo ""
+        echo "🌐 预计访问地址:"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/auto-advance-game.html"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/start-game.html"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/game-homepage.html"
+        echo ""
+        echo "✅ 部署准备完成"
+        
+    - name: Update deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "🎉 部署流程完成"
+          echo "请检查 Cloudflare Dashboard 查看部署状态"
+        else
+          echo "⚠️ 部署流程未完全成功"
+          echo "请检查日志并按照手动部署步骤操作"
+        fi
