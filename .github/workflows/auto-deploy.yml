@@ -1,0 +1,176 @@
+name: Auto Deploy to Cloudflare Pages
+
+on:
+  workflow_dispatch:  # 手动触发
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'  # 每6小时自动检查
+
+env:
+  PROJECT_NAME: "rental-tax-deduction-game"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup project
+      run: |
+        echo "📦 项目设置"
+        echo "=========="
+        echo "项目名称: ${{ env.PROJECT_NAME }}"
+        echo "分支: ${{ github.ref }}"
+        echo "提交: ${{ github.sha }}"
+        echo ""
+        echo "📁 文件检查:"
+        ls -la *.html | head -10
+        echo "HTML文件总数: $(ls -la *.html | wc -l)"
+        echo "项目大小: $(du -sh .)"
+        
+    - name: Create deployment manifest
+      run: |
+        echo "📋 创建部署清单..."
+        
+        # 创建部署清单文件
+        cat > deploy-manifest.json << EOF
+        {
+          "project": "${{ env.PROJECT_NAME }}",
+          "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+          "commit": "${{ github.sha }}",
+          "branch": "${{ github.ref_name }}",
+          "files": {
+            "html": $(ls -1 *.html | wc -l),
+            "total": $(find . -type f | wc -l),
+            "size": "$(du -sh . | cut -f1)"
+          },
+          "config": {
+            "build_command": "",
+            "output_dir": ".",
+            "root_dir": "."
+          }
+        }
+        EOF
+        
+        echo "✅ 部署清单创建完成"
+        cat deploy-manifest.json
+        
+    - name: Generate deployment report
+      run: |
+        echo "📊 部署报告"
+        echo "=========="
+        echo ""
+        echo "🌐 预计访问地址:"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/auto-advance-game.html"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/start-game.html"
+        echo "- https://${{ env.PROJECT_NAME }}.pages.dev/game-homepage.html"
+        echo ""
+        echo "📁 部署文件:"
+        echo "HTML 文件: $(ls -1 *.html | wc -l) 个"
+        echo "配置文件: $(ls -1 *.yml *.json 2>/dev/null | wc -l) 个"
+        echo "总文件数: $(find . -type f | wc -l)"
+        echo ""
+        echo "🔧 部署状态: 准备就绪"
+        echo "📅 部署时间: $(date)"
+        
+    - name: Create Cloudflare Pages configuration
+      run: |
+        echo "⚙️ 创建 Cloudflare Pages 配置文件..."
+        
+        # 创建 _config.yml
+        cat > _cf_pages_config.yml << EOF
+        # Cloudflare Pages 配置
+        # 自动生成于 $(date)
+        
+        name: ${{ env.PROJECT_NAME }}
+        production_branch: main
+        
+        build:
+          command: ""
+          output_dir: "."
+          root_dir: "."
+        
+        headers:
+          - path: "/*"
+            headers:
+              - key: "Cache-Control"
+                value: "public, max-age=3600"
+        
+        redirects:
+          - from: "/"
+            to: "/start-game.html"
+            status: 302
+        
+        # 环境变量
+        env:
+          NODE_VERSION: "18"
+          SKIP_BUILD: "true"
+        EOF
+        
+        echo "✅ 配置文件创建完成"
+        
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_NAME }}-deployment-package
+        path: |
+          *.html
+          *.js
+          *.css
+          *.md
+          *.yml
+          *.json
+        retention-days: 7
+        
+    - name: Deployment instructions
+      run: |
+        echo "🎯 部署说明"
+        echo "=========="
+        echo ""
+        echo "由于 Cloudflare API Token 验证问题，需要手动完成最后一步:"
+        echo ""
+        echo "1. 登录 Cloudflare Dashboard:"
+        echo "   🔗 https://dash.cloudflare.com/"
+        echo ""
+        echo "2. 创建 Pages 项目:"
+        echo "   📍 Workers & Pages → Create application → Pages"
+        echo ""
+        echo "3. 连接 GitHub:"
+        echo "   🔗 选择 GitHub → 授权 → 选择本仓库"
+        echo ""
+        echo "4. 配置构建设置:"
+        echo "   ⚙️ 项目名称: ${{ env.PROJECT_NAME }}"
+        echo "   🌿 生产分支: main"
+        echo "   🏗️  框架预设: None"
+        echo "   🛠️  构建命令: (留空)"
+        echo "   📁 输出目录: ."
+        echo "   📍 根目录: ."
+        echo ""
+        echo "5. 保存并部署:"
+        echo "   💾 点击 'Save and Deploy'"
+        echo ""
+        echo "6. 等待部署完成 (2-3分钟)"
+        echo ""
+        echo "7. 测试访问:"
+        echo "   🌐 https://${{ env.PROJECT_NAME }}.pages.dev"
+        echo ""
+        echo "✅ 完成时间: $(date)"
+        
+    - name: Send deployment notification
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "🎉 部署包准备完成!"
+          echo "请按照上述说明完成 Cloudflare Pages 配置"
+        else
+          echo "⚠️ 部署包准备过程中出现问题"
+          echo "请检查错误日志"
+        fi
