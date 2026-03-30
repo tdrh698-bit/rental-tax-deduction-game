@@ -3,565 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>住房租金扣除游戏 - 完整测试版</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>游戏功能测试</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-        }
-        
-        :root {
-            --primary-blue: #1E5AA8;
-            --secondary-blue: #2D7DD2;
-            --accent-green: #4CAF50;
-            --warning-red: #F44336;
-            --light-gray: #F5F7FA;
-            --dark-gray: #333333;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-        }
-        
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--dark-gray);
-        }
-        
-        .container {
-            max-width: 1200px;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
         }
-        
-        .header {
+        .test-section {
             background: white;
-            border-radius: var(--radius);
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-            border-left: 6px solid var(--primary-blue);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .header h1 {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .header p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        
-        .missions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .mission-card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            border-top: 4px solid var(--primary-blue);
-        }
-        
-        .mission-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .mission-card.completed {
-            border-top-color: var(--accent-green);
-        }
-        
-        .mission-card.in-progress {
-            border-top-color: #FF9800;
-        }
-        
-        .mission-icon {
-            width: 60px;
-            height: 60px;
-            background: var(--light-gray);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: var(--primary-blue);
-        }
-        
-        .mission-card.completed .mission-icon {
-            background: #E8F5E9;
-            color: var(--accent-green);
-        }
-        
-        .mission-card.in-progress .mission-icon {
-            background: #FFF3E0;
-            color: #FF9800;
-        }
-        
-        .mission-card h3 {
-            margin-bottom: 10px;
-            color: var(--dark-gray);
-        }
-        
-        .mission-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-        
-        .mission-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-        
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .status-completed {
-            background: #E8F5E9;
-            color: var(--accent-green);
-        }
-        
-        .status-in-progress {
-            background: #FFF3E0;
-            color: #FF9800;
-        }
-        
-        .status-not-started {
-            background: #F5F5F5;
-            color: #999;
-        }
-        
-        .game-area {
-            background: white;
-            border-radius: var(--radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
-            margin-bottom: 30px;
-            min-height: 500px;
-        }
-        
-        .game-area h2 {
-            color: var(--primary-blue);
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--light-gray);
-        }
-        
-        .btn {
-            padding: 12px 24px;
+        .test-button {
+            background: #4CAF50;
+            color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            margin: 10px 5px;
         }
-        
-        .btn-primary {
-            background: var(--primary-blue);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--secondary-blue);
-            transform: translateY(-2px);
-        }
-        
-        .btn-secondary {
-            background: #f0f0f0;
-            color: var(--dark-gray);
-        }
-        
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-        
-        .btn-success {
-            background: var(--accent-green);
-            color: white;
-        }
-        
-        .btn-success:hover {
+        .test-button:hover {
             background: #45a049;
         }
-        
-        .game-controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            justify-content: center;
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f0f0f0;
         }
-        
-        .instructions {
-            background: #F0F7FF;
-            border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary-blue);
-        }
-        
-        .instructions h3 {
-            color: var(--primary-blue);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-        
-        .test-link {
-            background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            margin-top: 30px;
-        }
-        
-        .test-link h3 {
-            color: var(--primary-blue);
-            margin-bottom: 15px;
-        }
-        
-        .url-box {
-            background: #f8f9fa;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 20px 0;
-            font-family: monospace;
-            font-size: 14px;
-            word-break: break-all;
-        }
-        
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            margin: 20px auto;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #666;
-        }
-        
-        @media (max-width: 768px) {
-            .missions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .game-controls {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-        }
+        .success { color: green; }
+        .error { color: red; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-gamepad"></i> 住房租金扣除游戏 - 完整测试版</h1>
-            <p>这是一个游戏化的个人所得税学习平台，通过互动游戏帮助用户掌握住房租金扣除政策。包含四个完整任务关卡。</p>
-        </div>
-        
-        <div class="instructions">
-            <h3><i class="fas fa-info-circle"></i> 游戏说明</h3>
-            <p>本游戏包含四个任务关卡，每个关卡都有不同的学习目标和游戏机制：</p>
-            <ul>
-                <li><strong>任务一：城市等级判断</strong> - 拖拽城市到正确的扣除标准区域</li>
-                <li><strong>任务二：租赁合同审查</strong> - 检查合同完整性，找出问题点</li>
-                <li><strong>任务三：扣除计算实战</strong> - 计算实际可扣除金额</li>
-                <li><strong>任务四：申报材料准备</strong> - 收集正确的申报材料</li>
-            </ul>
-            <p>点击下方任务卡片开始游戏，或使用测试链接体验完整功能。</p>
-        </div>
-        
-        <div class="missions-grid">
-            <div class="mission-card completed" onclick="loadMission(1)">
-                <div class="mission-icon">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <h3>任务一：城市等级判断</h3>
-                <p>将城市拖拽到对应的扣除标准区域，学习不同城市的扣除标准（1500/1100/800元）。</p>
-                <div class="mission-status">
-                    <span class="status-badge status-completed">已完成</span>
-                    <span><i class="fas fa-star"></i> 25分</span>
-                </div>
-            </div>
-            
-            <div class="mission-card completed" onclick="loadMission(2)">
-                <div class="mission-icon">
-                    <i class="fas fa-file-contract"></i>
-                </div>
-                <h3>任务二：租赁合同审查</h3>
-                <p>检查租赁合同的完整性，找出缺失或错误的信息，学习合同备案要求。</p>
-                <div class="mission-status">
-                    <span class="status-badge status-completed">已完成</span>
-                    <span><i class="fas fa-star"></i> 100分</span>
-                </div>
-            </div>
-            
-            <div class="mission-card in-progress" onclick="loadMission(3)">
-                <div class="mission-icon">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <h3>任务三：扣除计算实战</h3>
-                <p>通过4个真实场景计算扣除金额，掌握不同家庭状况下的计算规则。</p>
-                <div class="mission-status">
-                    <span class="status-badge status-in-progress">进行中</span>
-                    <span><i class="fas fa-clock"></i> 4个场景</span>
-                </div>
-            </div>
-            
-            <div class="mission-card in-progress" onclick="loadMission(4)">
-                <div class="mission-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3>任务四：申报材料准备</h3>
-                <p>收集正确的申报材料，避免选择不需要的材料，5分钟倒计时挑战。</p>
-                <div class="mission-status">
-                    <span class="status-badge status-in-progress">进行中</span>
-                    <span><i class="fas fa-clock"></i> 5分钟</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="game-area" id="gameArea">
-            <h2><i class="fas fa-play-circle"></i> 选择任务开始游戏</h2>
-            <p>请点击上方的任务卡片开始相应的游戏关卡。</p>
-            <p>每个任务都有完整的交互界面、计分系统和知识点解析。</p>
-            
-            <div class="game-controls">
-                <button class="btn btn-primary" onclick="loadMission(1)">
-                    <i class="fas fa-play"></i> 开始任务一
-                </button>
-                <button class="btn btn-primary" onclick="loadMission(2)">
-                    <i class="fas fa-play"></i> 开始任务二
-                </button>
-                <button class="btn btn-primary" onclick="loadMission(3)">
-                    <i class="fas fa-play"></i> 开始任务三
-                </button>
-                <button class="btn btn-primary" onclick="loadMission(4)">
-                    <i class="fas fa-play"></i> 开始任务四
-                </button>
-            </div>
-        </div>
-        
-        <div class="test-link">
-            <h3><i class="fas fa-link"></i> 游戏测试链接</h3>
-            <p>使用以下链接访问完整的游戏页面：</p>
-            <div class="url-box" id="gameUrl">
-                http://localhost:3000/index.html
-            </div>
-            <p>或扫描二维码（在本地服务器运行时）：</p>
-            <div class="qr-code">
-                <div>QR Code<br>localhost:3000</div>
-            </div>
-            <div class="game-controls">
-                <button class="btn btn-success" onclick="startServer()">
-                    <i class="fas fa-server"></i> 启动本地服务器
-                </button>
-                <button class="btn btn-secondary" onclick="copyUrl()">
-                    <i class="fas fa-copy"></i> 复制链接
-                </button>
-            </div>
-        </div>
+    <h1>住房租金扣除游戏功能测试</h1>
+    
+    <div class="test-section">
+        <h2>测试1: JavaScript控制台</h2>
+        <button class="test-button" onclick="testConsole()">测试控制台输出</button>
+        <div id="console-result" class="result"></div>
     </div>
     
+    <div class="test-section">
+        <h2>测试2: 游戏文件链接</h2>
+        <button class="test-button" onclick="testLinks()">测试游戏文件链接</button>
+        <div id="links-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>测试3: 服务器状态</h2>
+        <button class="test-button" onclick="testServer()">测试服务器状态</button>
+        <div id="server-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>可用游戏版本</h2>
+        <ul>
+            <li><a href="auto-advance-game.html" target="_blank">自动跳转优化版</a></li>
+            <li><a href="game-homepage.html" target="_blank">游戏首页导航</a></li>
+            <li><a href="game-main-complete.html" target="_blank">完整通关版</a></li>
+            <li><a href="working-game.html" target="_blank">稳定可操作版</a></li>
+            <li><a href="picture-version.html" target="_blank">图片版本恢复页</a></li>
+        </ul>
+    </div>
+
     <script>
-        // 游戏任务加载函数
-        function loadMission(missionNumber) {
-            const gameArea = document.getElementById('gameArea');
+        function testConsole() {
+            console.log('测试: JavaScript控制台正常工作');
+            document.getElementById('console-result').innerHTML = 
+                '<span class="success">✓ 控制台测试通过 - 查看浏览器控制台查看日志</span>';
+        }
+        
+        function testLinks() {
+            const links = [
+                'auto-advance-game.html',
+                'game-homepage.html',
+                'game-main-complete.html',
+                'working-game.html'
+            ];
             
-            switch(missionNumber) {
-                case 1:
-                    gameArea.innerHTML = `
-                        <h2><i class="fas fa-map-marker-alt"></i> 任务一：城市等级判断</h2>
-                        <p>这个任务需要加载完整的城市拖拽游戏界面。</p>
-                        <p>由于这是一个测试页面，完整功能请访问主游戏页面。</p>
-                        <div class="game-controls">
-                            <button class="btn btn-primary" onclick="window.open('index.html#mission1', '_blank')">
-                                <i class="fas fa-external-link-alt"></i> 打开完整游戏
-                            </button>
-                            <button class="btn btn-secondary" onclick="loadMission(0)">
-                                <i class="fas fa-arrow-left"></i> 返回
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 2:
-                    gameArea.innerHTML = `
-                        <h2><i class="fas fa-file-contract"></i> 任务二：租赁合同审查</h2>
-                        <p>这个任务需要加载合同审查游戏界面。</p>
-                        <p>由于这是一个测试页面，完整功能请访问主游戏页面。</p>
-                        <div class="game-controls">
-                            <button class="btn btn-primary" onclick="window.open('index.html#mission2', '_blank')">
-                                <i class="fas fa-external-link-alt"></i> 打开完整游戏
-                            </button>
-                            <button class="btn btn-secondary" onclick="loadMission(0)">
-                                <i class="fas fa-arrow-left"></i> 返回
-                            </button>
-                        </div>
-                    `;
-                    break;
-                    
-                case 3:
-                    gameArea.innerHTML = `
-                        <h2><i class="fas fa-calculator"></i> 任务三：扣除计算实战</h2>
-                        <div id="calculationGame"></div>
-                        <div class="game-controls">
-                            <button class="btn btn-secondary" onclick="loadMission(0)">
-                                <i class="fas fa-arrow-left"></i> 返回
-                            </button>
-                        </div>
-                    `;
-                    // 加载计算游戏
-                    setTimeout(() => {
-                        if (typeof CalculationGame !== 'undefined') {
-                            calculationGame = new CalculationGame();
-                            calculationGame.init();
+            let results = [];
+            links.forEach(link => {
+                fetch(link)
+                    .then(response => {
+                        if (response.ok) {
+                            results.push(`<span class="success">✓ ${link}: 可访问 (${response.status})</span>`);
                         } else {
-                            document.getElementById('calculationGame').innerHTML = `
-                                <p>正在加载计算游戏模块...</p>
-                                <p>如果长时间未加载，请检查calculation-game.js文件。</p>
-                            `;
+                            results.push(`<span class="error">✗ ${link}: 不可访问 (${response.status})</span>`);
                         }
-                    }, 100);
-                    break;
-                    
-                case 4:
-                    gameArea.innerHTML = `
-                        <h2><i class="fas fa-clipboard-list"></i> 任务四：申报材料准备</h2>
-                        <div id="materialsGame"></div>
-                        <div class="game-controls">
-                            <button class="btn btn-secondary" onclick="loadMission(0)">
-                                <i class="fas fa-arrow-left"></i> 返回
-                            </button>
-                        </div>
-                    `;
-                    // 加载材料游戏
-                    setTimeout(() => {
-                        if (typeof MaterialsGame !== 'undefined') {
-                            materialsGame = new MaterialsGame();
-                            materialsGame.init();
-                        } else {
-                            document.getElementById('materialsGame').innerHTML = `
-                                <p>正在加载材料游戏模块...</p>
-                                <p>如果长时间未加载，请检查materials-game.js文件。</p>
-                            `;
+                    })
+                    .catch(error => {
+                        results.push(`<span class="error">✗ ${link}: 错误 (${error.message})</span>`);
+                    })
+                    .finally(() => {
+                        if (results.length === links.length) {
+                            document.getElementById('links-result').innerHTML = results.join('<br>');
                         }
-                    }, 100);
-                    break;
-                    
-                default:
-                    gameArea.innerHTML = `
-                        <h2><i class="fas fa-play-circle"></i> 选择任务开始游戏</h2>
-                        <p>请点击上方的任务卡片开始相应的游戏关卡。</p>
-                        <p>每个任务都有完整的交互界面、计分系统和知识点解析。</p>
-                        
-                        <div class="game-controls">
-                            <button class="btn btn-primary" onclick="loadMission(1)">
-                                <i class="fas fa-play"></i> 开始任务一
-                            </button>
-                            <button class="btn btn-primary" onclick="loadMission(2)">
-                                <i class="fas fa-play"></i> 开始任务二
-                            </button>
-                            <button class="btn btn-primary" onclick="loadMission(3)">
-                                <i class="fas fa-play"></i> 开始任务三
-                            </button>
-                            <button class="btn btn-primary" onclick="loadMission(4)">
-                                <i class="fas fa-play"></i> 开始任务四
-                            </button>
-                        </div>
-                    `;
-                    break;
-            }
-        }
-        
-        // 服务器控制函数
-        function startServer() {
-            alert('要启动本地服务器，请在终端中运行以下命令之一：\n\n1. Python 3: python3 -m http.server 3000\n2. Node.js: npx serve -p 3000\n3. PHP: php -S localhost:3000\n\n然后访问: http://localhost:3000/test-game.html');
-        }
-        
-        function copyUrl() {
-            const url = document.getElementById('gameUrl').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('链接已复制到剪贴板！');
-            }).catch(err => {
-                console.error('复制失败:', err);
-                alert('复制失败，请手动复制链接。');
+                    });
             });
         }
         
-        // 动态加载游戏脚本
-        function loadGameScripts() {
-            // 加载计算游戏脚本
-            const calcScript = document.createElement('script');
-            calcScript.src = 'calculation-game.js';
-            calcScript.onload = () => console.log('计算游戏脚本加载成功');
-            calcScript.onerror = () => console.error('计算游戏脚本加载失败');
-            document.head.appendChild(calcScript);
-            
-            // 加载材料游戏脚本
-            const materialsScript = document.createElement('script');
-            materialsScript.src = 'materials-game.js';
-            materialsScript.onload = () => console.log('材料游戏脚本加载成功');
-            materialsScript.onerror = () => console.error('材料游戏脚本加载失败');
-            document.head.appendChild(materialsScript);
-            
-            // 加载合同游戏脚本
-            const contractScript = document.createElement('script');
-            contractScript.src = 'contract-game.js';
-            contractScript.onload = () => console.log('合同游戏脚本加载成功');
-            contractScript.onerror = () => console.error('合同游戏脚本加载失败');
-            document.head.appendChild(contractScript);
+        function testServer() {
+            fetch('/')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('server-result').innerHTML = 
+                            `<span class="success">✓ 服务器运行正常 (状态码: ${response.status})</span>`;
+                    } else {
+                        document.getElementById('server-result').innerHTML = 
+                            `<span class="error">✗ 服务器异常 (状态码: ${response.status})</span>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('server-result').innerHTML = 
+                        `<span class="error">✗ 服务器连接失败: ${error.message}</span>`;
+                });
         }
         
-        // 页面加载完成后加载游戏脚本
-        document.addEventListener('DOMContentLoaded', loadGameScripts);
+        // 页面加载时自动运行一些测试
+        window.onload = function() {
+            console.log('测试页面加载完成');
+            testConsole();
+            setTimeout(testServer, 1000);
+        };
     </script>
 </body>
 </html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住房租金扣除游戏 - Next.js版本测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(67, 233, 123, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #43e97b;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+            
+            .iframe-container {
+                height: 400px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🏦</div>
+            <h1>住房租金扣除通关游戏</h1>
+            <p class="subtitle">Next.js + Tailwind CSS 现代化实现</p>
+        </div>
+        
+        <div class="card">
+            <h2>🎮 游戏测试入口</h2>
+            <p>这是一个基于详细需求文档开发的住房租金扣除学习游戏，采用现代化的Next.js 14 + TypeScript + Tailwind CSS技术栈实现。</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🏙️</div>
+                    <h3>城市等级判断</h3>
+                    <p>掌握不同城市扣除标准</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📝</div>
+                    <h3>合同审查实践</h3>
+                    <p>识别租赁合同问题点</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🧮</div>
+                    <h3>扣除计算实战</h3>
+                    <p>实时计算可扣除金额</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📋</div>
+                    <h3>申报材料准备</h3>
+                    <p>收集必需申报材料</p>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <a href="http://localhost:3001" target="_blank" class="btn btn-primary">
+                    🚀 直接访问Next.js应用
+                </a>
+                <a href="#game-preview" class="btn btn-secondary">
+                    👀 预览游戏界面
+                </a>
+            </div>
+            
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>服务器状态: 运行中</span>
+            </div>
+            
+            <div class="tech-stack">
+                <span class="tech-badge">Next.js 14</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Tailwind CSS</span>
+                <span class="tech-badge">React 19</span>
+                <span class="tech-badge">响应式设计</span>
+            </div>
+        </div>
+        
+        <div class="card" id="game-preview">
+            <h2>🖥️ 游戏界面预览</h2>
+            <p>以下是住房租金扣除游戏的实时预览界面。如果无法加载，请点击上方的"直接访问Next.js应用"按钮。</p>
+            
+            <div class="iframe-container">
+                <iframe src="http://localhost:3001" title="住房租金扣除游戏预览"></iframe>
+            </div>
+            
+            <div class="buttons">
+                <a href="http://localhost:3001" target="_blank" class="btn btn-primary">
+                    🔗 在新标签页中打开
+                </a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>📋 测试说明</h2>
+            <p><strong>访问方式:</strong> 由于Next.js应用运行在本地开发服务器，需要通过代理页面访问。</p>
+            <p><strong>功能状态:</strong> 前端界面已完成，具体游戏交互逻辑待实现。</p>
+            <p><strong>兼容性:</strong> 支持所有现代浏览器，完美适配移动设备。</p>
+            <p><strong>数据:</strong> 当前为演示数据，实际游戏数据待后端API集成。</p>
+            
+            <div class="buttons">
+                <a href="https://github.com/tdrh698-bit/tax" target="_blank" class="btn btn-secondary">
+                    📁 查看GitHub源码
+                </a>
+                <a href="/requirements/rental-deduction-game.md" target="_blank" class="btn btn-secondary">
+                    📄 查看需求文档
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 自动检查iframe加载状态
+        window.addEventListener('load', function() {
+            const iframe = document.querySelector('iframe');
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.querySelector('.status span');
+            
+            iframe.addEventListener('load', function() {
+                statusDot.style.background = '#43e97b';
+                statusText.textContent = '服务器状态: 正常运行';
+            });
+            
+            iframe.addEventListener('error', function() {
+                statusDot.style.background = '#f5576c';
+                statusText.textContent = '服务器状态: 连接失败';
+            });
+            
+            // 定期检查服务器状态
+            setInterval(function() {
+                fetch('http://localhost:3001')
+                    .then(response => {
+                        if (response.ok) {
+                            statusDot.style.background = '#43e97b';
+                            statusText.textContent = '服务器状态: 正常运行';
+                        } else {
+                            statusDot.style.background = '#f5576c';
+                            statusText.textContent = '服务器状态: 服务异常';
+                        }
+                    })
+                    .catch(() => {
+                        statusDot.style.background = '#f5576c';
+                        statusText.textContent = '服务器状态: 连接失败';
+                    });
+            }, 10000);
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
