@@ -1,0 +1,27 @@
+{
+  "name": "rental-tax-deduction-game",
+  "version": "1.0.0",
+  "description": "住房租金扣除通关游戏 - 教育性HTML游戏",
+  "main": "auto-advance-game.html",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0",
+    "build": "echo \"Static site - no build required\""
+  },
+  "keywords": [
+    "tax",
+    "education",
+    "game",
+    "html5",
+    "interactive"
+  ],
+  "author": "李玉辉",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tdrh698-bit/rental-tax-deduction-game.git"
+  },
+  "homepage": "https://rental-tax-deduction-game.pages.dev",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,45 @@
+# Cloudflare Pages 配置文件
+# 用于住房租金扣除游戏部署
+
+# 基本配置
+name: rental-tax-deduction-game
+production_branch: main
+
+# 构建设置（静态站点，无需构建）
+build:
+  command: ""
+  output_dir: "/"
+
+# 环境变量
+env:
+  NODE_VERSION: "18"
+
+# 路由规则
+routes:
+  - path: /*
+    status: 200
+
+# 自定义头部
+headers:
+  - path: /*
+    headers:
+      - key: X-Frame-Options
+        value: DENY
+      - key: X-Content-Type-Options
+        value: nosniff
+      - key: X-XSS-Protection
+        value: "1; mode=block"
+      - key: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+# 缓存规则
+cache:
+  - path: /*
+    ttl: 3600
+    bypass_cache: false
+
+# 重定向规则（可选）
+redirects:
+  - from: /old-game.html
+    to: /auto-advance-game.html
+    status: 301
