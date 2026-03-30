@@ -1,0 +1,123 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Build static site
+        run: |
+          echo "📦 构建静态站点..."
+          echo "HTML 文件数: $(ls -1 *.html | wc -l)"
+          echo "项目大小: $(du -sh .)"
+          
+          # 创建简单的导航页
+          cat > index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="zh-CN">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>住房租金扣除游戏 - GitHub Pages</title>
+              <style>
+                  * { margin: 0; padding: 0; box-sizing: border-box; }
+                  body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+                  .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 15px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+                  h1 { color: #1E5AA8; text-align: center; margin-bottom: 30px; }
+                  .subtitle { text-align: center; color: #666; margin-bottom: 40px; }
+                  .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+                  .game-card { background: #f8f9fa; border-radius: 10px; padding: 25px; border: 2px solid #e0e0e0; transition: all 0.3s; }
+                  .game-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: #1E5AA8; }
+                  .game-card.recommended { background: linear-gradient(135deg, #1E5AA8 0%, #2a6bc5 100%); color: white; border-color: #1E5AA8; }
+                  .game-card.recommended h3 { color: white; }
+                  .game-card.recommended p { color: rgba(255,255,255,0.9); }
+                  .game-icon { font-size: 2.5rem; margin-bottom: 15px; }
+                  h3 { color: #333; margin-bottom: 10px; }
+                  p { color: #666; line-height: 1.6; margin-bottom: 20px; }
+                  .btn { display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; transition: background 0.3s; }
+                  .btn:hover { background: #45a049; }
+                  .btn.recommended { background: #FF9800; }
+                  .btn.recommended:hover { background: #f57c00; }
+                  .info-box { background: #f0f7ff; border-radius: 8px; padding: 20px; margin-top: 30px; border-left: 4px solid #1E5AA8; }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🏠 住房租金扣除通关游戏</h1>
+                  <p class="subtitle">通过 GitHub Pages 部署的教育性 HTML 游戏</p>
+                  
+                  <div class="game-grid">
+                      <div class="game-card recommended">
+                          <div class="game-icon">🚀</div>
+                          <h3>自动跳转优化版</h3>
+                          <p>推荐版本！自动跳转+正确提示+全年计算+可选择模式</p>
+                          <a href="auto-advance-game.html" class="btn recommended">开始游戏</a>
+                      </div>
+                      
+                      <div class="game-card">
+                          <div class="game-icon">🏠</div>
+                          <h3>游戏首页导航</h3>
+                          <p>完整导航页面，包含所有版本和游戏数据</p>
+                          <a href="game-homepage.html" class="btn">查看导航</a>
+                      </div>
+                      
+                      <div class="game-card">
+                          <div class="game-icon">🎮</div>
+                          <h3>稳定可操作版</h3>
+                          <p>基础稳定版本，适合快速测试和体验</p>
+                          <a href="working-game.html" class="btn">启动游戏</a>
+                      </div>
+                      
+                      <div class="game-card">
+                          <div class="game-icon">🔧</div>
+                          <h3>功能测试页</h3>
+                          <p>系统测试+问题诊断+链接验证</p>
+                          <a href="test-game.html" class="btn">运行测试</a>
+                      </div>
+                  </div>
+                  
+                  <div class="info-box">
+                      <h3>📋 部署信息</h3>
+                      <p><strong>部署方式：</strong> GitHub Pages</p>
+                      <p><strong>部署时间：</strong> $(date)</p>
+                      <p><strong>文件数量：</strong> $(ls -1 *.html | wc -l) 个 HTML 游戏文件</p>
+                      <p><strong>访问地址：</strong> https://tdrh698-bit.github.io/rental-tax-deduction-game/</p>
+                      <p><strong>GitHub 仓库：</strong> <a href="https://github.com/tdrh698-bit/rental-tax-deduction-game">tdrh698-bit/rental-tax-deduction-game</a></p>
+                  </div>
+              </div>
+          </body>
+          </html>
+          EOF
+          
+          echo "✅ 静态站点构建完成"
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
