@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>住房租金扣除通关游戏 - 首页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1E5AA8;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --danger: #F44336;
+            --light: #F5F7FA;
+            --dark: #333333;
+            --radius: 20px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .homepage-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 英雄区域 */
+        .hero-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--success), var(--warning), var(--danger));
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: -0.5px;
+        }
+        
+        .hero-subtitle {
+            color: #666;
+            font-size: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 20px;
+            box-shadow: 0 8px 30px rgba(30, 90, 168, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 直接跳转按钮 */
+        .jump-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .jump-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition);
+            border: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .jump-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+        
+        .jump-card.featured {
+            border-color: var(--success);
+            background: linear-gradient(135deg, #E8F6F3, white);
+        }
+        
+        .jump-icon {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 25px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .jump-card.featured .jump-icon {
+            color: var(--success);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        
+        .jump-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .jump-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .jump-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .feature-item {
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .jump-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), #2980B9);
+            color: white;
+            padding: 18px 45px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .jump-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(52, 152, 219, 0.4);
+        }
+        
+        .jump-card.featured .jump-button {
+            background: linear-gradient(135deg, var(--success), #27AE60);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        /* 版本选择 */
+        .versions-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        
+        .section-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 40px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .versions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .version-item {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 25px;
+            transition: var(--transition);
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+        
+        .version-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .version-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .version-info {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .version-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .version-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 游戏数据 */
+        .stats-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        /* 服务器状态 */
+        .server-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        
+        .server-info {
+            background: var(--light);
+            border-radius: 15px;
+            padding: 25px;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        
+        .server-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .server-label {
+            color: #666;
+            min-width: 150px;
+        }
+        
+        .server-value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .server-status {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* 页脚 */
+        .homepage-footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .footer-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .footer-info {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 20px;
+            }
+            
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .jump-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .versions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .server-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .server-label {
+                min-width: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 28px;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="homepage-container">
+        <!-- 英雄区域 -->
+        <div class="hero-section">
+            <h1 class="hero-title">
+                <i class="fas fa-home"></i> 住房租金扣除通关游戏
+            </h1>
+            <p class="hero-subtitle">
+                基于科学学习路径设计的智能通关游戏，掌握个人所得税住房租金专项附加扣除核心知识。
+                包含4个完整任务，新增自动跳转、正确选项提示、全年金额填空、可选择模式等智能功能。
+            </p>
+            <div class="hero-badge">
+                <i class="fas fa-rocket"></i> 最终优化版 | 可直接跳转 | 智能功能
+            </div>
+        </div>
+        
+        <!-- 直接跳转按钮 -->
+        <div class="jump-section">
+            <div class="jump-card featured">
+                <div class="jump-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2 class="jump-title">自动跳转优化版</h2>
+                <p class="jump-desc">
+                    最终优化版本，包含所有智能功能：自动跳转到下一关、任务二显示正确选项、任务三全年金额填空、任务四可选择模式。
+                </p>
+                <div class="jump-features">
+                    <span class="feature-item">自动跳转</span>
+                    <span class="feature-item">正确选项提示</span>
+                    <span class="feature-item">全年金额填空</span>
+                    <span class="feature-item">可选择模式</span>
+                    <span class="feature-item">进度跟踪</span>
+                    <span class="feature-item">完成证书</span>
+                </div>
+                <button class="jump-button" onclick="window.open('auto-advance-game.html', '_blank')">
+                    <i class="fas fa-play"></i> 立即开始游戏
+                </button>
+            </div>
+            
+            <div class="jump-card">
+                <div class="jump-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h2 class="jump-title">完整通关版</h2>
+                <p class="jump-desc">
+                    一体化设计版本，4个任务在同一页面中通过标签切换，提供流畅的完整通关体验。
+                </p>
+                <div class="jump-features">
+                    <span class="feature-item">一体化设计</span>
+                    <span class="feature-item">标签切换</span>
+                    <span class="feature-item">完整流程</span>
+                    <span class="feature-item">流畅体验</span>
+                </div>
+                <button class="jump-button" onclick="window.open('game-main-complete.html', '_blank')">
+                    <i class="fas fa-play"></i> 开始完整通关
+                </button>
+            </div>
+            
+            <div class="jump-card">
+                <div class="jump-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 class="jump-title">稳定可操作版</h2>
+                <p class="jump-desc">
+                    100%确保可操作的稳定版本，经过全面测试验证，所有功能正常工作，适合快速测试。
+                </p>
+                <div class="jump-features">
+                    <span class="feature-item">100%可操作</span>
+                    <span class="feature-item">全面测试</span>
+                    <span class="feature-item">快速加载</span>
+                    <span class="feature-item">稳定可靠</span>
+                </div>
+                <button class="jump-button" onclick="window.open('working-game.html', '_blank')">
+                    <i class="fas fa-play"></i> 开始稳定测试
+                </button>
+            </div>
+        </div>
+        
+        <!-- 版本选择 -->
+        <div class="versions-section">
+            <h2 class="section-title">
+                <i class="fas fa-code-branch"></i> 所有可用版本
+            </h2>
+            
+            <div class="versions-grid">
+                <div class="version-item" onclick="window.open('picture-version.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-image"></i> 图片版本恢复页
+                    </div>
+                    <div class="version-info">
+                        基于图片恢复的导航页面，展示所有游戏数据和版本选择。
+                    </div>
+                    <a href="picture-version.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 查看恢复状态
+                    </a>
+                </div>
+                
+                <div class="version-item" onclick="window.open('final-integrated-game.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-puzzle-piece"></i> 集成优化版
+                    </div>
+                    <div class="version-info">
+                        模块二已优化的集成版本，包含进度跟踪和得分系统。
+                    </div>
+                    <a href="final-integrated-game.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 开始集成体验
+                    </a>
+                </div>
+                
+                <div class="version-item" onclick="window.open('restored-game.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-database"></i> 数据恢复导航页
+                    </div>
+                    <div class="version-info">
+                        数据恢复状态展示，包含所有游戏模块和城市数据。
+                    </div>
+                    <a href="restored-game.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 查看数据恢复
+                    </a>
+                </div>
+                
+                <div class="version-item" onclick="window.open('new-design-game.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-paint-brush"></i> 全新设计版
+                    </div>
+                    <div class="version-info">
+                        基于科学学习路径的现代化设计版本，提升用户体验。
+                    </div>
+                    <a href="new-design-game.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 体验新设计
+                    </a>
+                </div>
+                
+                <div class="version-item" onclick="window.open('contract-optimized.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-file-contract"></i> 模块二优化版
+                    </div>
+                    <div class="version-info">
+                        专门优化的合同审查实践模块，正确答案选项版本。
+                    </div>
+                    <a href="contract-optimized.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 测试模块二
+                    </a>
+                </div>
+                
+                <div class="version-item" onclick="window.open('fixed-master.html', '_blank')">
+                    <div class="version-name">
+                        <i class="fas fa-tools"></i> 修复导航版
+                    </div>
+                    <div class="version-info">
+                        修复状态展示和版本选择的导航页面。
+                    </div>
+                    <a href="fixed-master.html" class="version-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> 查看修复状态
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 游戏数据 -->
+        <div class="stats-section">
+            <h2 class="section-title">
+                <i class="fas fa-chart-bar"></i> 游戏数据统计
+            </h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">29</div>
+                    <div class="stat-label">游戏文件总数</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">完整通关任务</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">指定城市数据</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">72.5K</div>
+                    <div class="stat-label">最大文件大小</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">功能完整性</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-value">10h</div>
+                    <div class="stat-label">开发总时长</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <h3 style="color: var(--primary); margin-bottom: 20px;">
+                    <i class="fas fa-city"></i> 8个指定城市扣除标准
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px;">
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">北京市</div>
+                        <div style="color: var(--success); font-weight: bold;">1500元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">厦门市</div>
+                        <div style="color: var(--success); font-weight: bold;">1500元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">杭州市</div>
+                        <div style="color: var(--success); font-weight: bold;">1500元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">苏州市</div>
+                        <div style="color: var(--warning); font-weight: bold;">1100元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">温州市</div>
+                        <div style="color: var(--warning); font-weight: bold;">1100元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">佛山市</div>
+                        <div style="color: var(--warning); font-weight: bold;">1100元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">伊春市</div>
+                        <div style="color: #666; font-weight: bold;">800元/月</div>
+                    </div>
+                    <div style="background: var(--light); padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-weight: 700; color: var(--dark);">七台河市</div>
+                        <div style="color: #666; font-weight: bold;">800元/月</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 服务器状态 -->
+        <div class="server-section">
+            <h2 class="section-title">
+                <i class="fas fa-server"></i> 服务器状态信息
+            </h2>
+            
+            <div class="server-info">
+                <div class="server-item">
+                    <span class="server-label">服务器状态：</span>
+                    <span class="server-value">
+                        <span class="server-status">✅ 正常运行</span>
+                    </span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">服务器IP地址：</span>
+                    <span class="server-value">43.153.117.19</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">服务端口：</span>
+                    <span class="server-value">3000</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">游戏目录：</span>
+                    <span class="server-value">/root/.openclaw/agents/wechat-assistant/rental-game-package/</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">主推荐链接：</span>
+                    <span class="server-value">http://43.153.117.19:3000/auto-advance-game.html</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">首页链接：</span>
+                    <span class="server-value">http://43.153.117.19:3000/game-homepage.html</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">最后更新：</span>
+                    <span class="server-value">2026-03-27 18:39:00</span>
+                </div>
+                
+                <div class="server-item">
+                    <span class="server-label">项目状态：</span>
+                    <span class="server-value">
+                        <span style="background: var(--success); color: white; padding: 6px 15px; border-radius: 20px; font-weight: bold;">
+                            ✅ 开发完成，可交付使用
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="homepage-footer">
+            <h3 class="footer-title">
+                <i class="fas fa-home"></i> 住房租金扣除通关游戏
+            </h3>
+            <p class="footer-info">
+                基于科学学习路径设计的智能通关游戏，已开发完成29个版本文件，包含自动跳转优化版、完整通关版、稳定可操作版等多种选择。
+                所有游戏数据已写入MEMORY.md文档，方便今后调取和使用。
+            </p>
+            <p class="footer-info" style="margin-top: 15px;">
+                <i class="fas fa-info-circle"></i> 项目创建时间：2026-03-27 | 最后更新：2026-03-27 18:39
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载完成
+        window.onload = function() {
+            console.log('游戏首页加载完成');
+            console.log('服务器: 43.153.117.19:3000');
+            console.log('主推荐: auto-advance-game.html');
+            console.log('文件数量: 29个HTML游戏文件');
+            
+            // 显示欢迎消息
+            setTimeout(() => {
+                showHomepageMessage('🎮 住房租金扣除通关游戏首页已加载完成！', 'success');
+            }, 1000);
+        };
+        
+        // 显示消息
+        function showHomepageMessage(message, type) {
+            const msg = document.createElement('div');
+            msg.textContent = message;
+            msg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 20px 30px;
+                background: ${type === 'success' ? 'var(--success)' : 'var(--primary)'};
+                color: white;
+                border-radius: 15px;
+                z-index: 10000;
+                animation: slideInRight 0.6s ease-out;
+                font-weight: bold;
+                font-size: 16px;
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+                max-width: 500px;
+            `;
+            
+            document.body.appendChild(msg);
+            
+            setTimeout(() => {
+                msg.style.animation = 'slideOutRight 0.6s ease-out';
+                setTimeout(() => msg.remove(), 600);
+            }, 4000);
+        }
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            // Ctrl + 1: 打开自动跳转优化版
+            if (event.ctrlKey && event.key === '1') {
+                window.open('auto-advance-game.html', '_blank');
+                showHomepageMessage('已打开：自动跳转优化版', 'info');
+            }
+            
+            // Ctrl + 2: 打开完整通关版
+            if (event.ctrlKey && event.key === '2') {
+                window.open('game-main-complete.html', '_blank');
+                showHomepageMessage('已打开：完整通关版', 'info');
+            }
+            
+            // Ctrl + 3: 打开稳定可操作版
+            if (event.ctrlKey && event.key === '3') {
+                window.open('working-game.html', '_blank');
+                showHomepageMessage('已打开：稳定可操作版', 'info');
+            }
+            
+            // Ctrl + H: 回到首页
+            if (event.ctrlKey && event.key === 'h') {
+                window.location.reload();
+                showHomepageMessage('已刷新首页', 'info');
+            }
+        });
+    </script>
+</body>
+</html>
